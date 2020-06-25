@@ -1,0 +1,67 @@
+.select {
+    position: relative;
+    padding: 10px 17px;
+    border-radius: 5px;
+    z-index: 5;
+    cursor: pointer;
+    font-weight: 500;
+    color: white;
+    box-shadow: 0 0 7px rgba(164,164,164, 1);
+    margin: 5px 0;
+}
+
+.select .main-wrapper {
+    display: flex;
+    justify-content: space-between;
+}
+
+.options {
+    position: absolute;
+    width: 100%;
+    top: 35px;
+    left: 0px;
+    background: inherit;
+    border-radius: 5px;
+}
+
+.option {
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    border-radius: 5px;
+    width: 100%;
+}
+
+.option:hover {
+    background: gray;
+}
+
+.arrow {
+    border: solid white;
+    border-width: 0 3px 3px 0;
+    display: inline-block;
+    padding: 3px;
+    height: 8px;
+    width: 8px;
+    transition: transform 0.2s;
+}
+
+.down {
+    transform: rotate(45deg);
+    -webkit-transform: rotate(45deg);
+}
+
+.up {
+    transform: rotate(-135deg) translate(-50%, -25%);
+    -webkit-transform: rotate(-135deg) translate(-50%, -25%);
+}
+
+.right {
+    transform: rotate(-45deg);
+    -webkit-transform: rotate(-45deg);
+}
+
+.left {
+    transform: rotate(135deg);
+    -webkit-transform: rotate(135deg);
+}

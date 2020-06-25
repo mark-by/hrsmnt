@@ -1,0 +1,21 @@
+.container.account {
+    padding-top: 30px;
+    flex-flow: row;
+}
+
+.account-window {
+    padding-left: 175px;
+}
+
+@media screen and (max-width: 768px) {
+    .container.account {
+        padding-top: 10px;
+        flex-flow: column;
+    }
+
+    .account-window {
+        padding-left: unset;
+        padding-top: 50px;
+    }
+}
+

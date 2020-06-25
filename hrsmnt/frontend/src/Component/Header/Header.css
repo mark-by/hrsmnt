@@ -1,0 +1,61 @@
+header {
+    height: 50px;
+    background: white;
+    box-shadow: 0 4px 4px rgba(217, 217, 217, 0.7);
+    position: fixed;
+    width: 100%;
+    z-index: 9000;
+}
+
+header .container {
+    height: 100%;
+    z-index: 9000;
+}
+
+.logo {
+    font-size: 24px;
+    font-weight: 900;
+    cursor: pointer;
+}
+
+header .row {
+    align-items: center;
+    justify-content: space-between;
+    height: 100%;
+}
+
+.header-left-container {
+    display: flex;
+    align-items: center;
+}
+
+header .username {
+    margin-left: 5px;
+    position: absolute;
+    transform: translate(0, -8px);
+    max-width: 120px;
+    overflow-x: hidden;
+}
+
+.bag-wrapper {
+    position: relative;
+}
+
+.bag-counter {
+    position: absolute;
+    right: 0;
+    top: 50%;
+    background: black;
+    color: white;
+    font-size: 12px;
+    padding: 3px 6px;
+    border-radius: 10px;
+    font-weight: bold;
+}
+
+@media screen and (max-width: 576px){
+    header .username {
+        display: none;
+    }
+}
+

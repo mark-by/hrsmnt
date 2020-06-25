@@ -1,0 +1,51 @@
+.add-button {
+    transform: rotate(45deg);
+    width: 20px;
+    height: 20px;
+    margin-top: 10px;
+}
+
+.address {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+    align-items: center;
+}
+
+.address-wrapper {
+    width: 100%;
+    background: white;
+    padding: 10px;
+    display: flex;
+    box-shadow: 9px 9px 18px rgba(217, 217, 217, 0.7);
+    align-items: center;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.address-wrapper input {
+    border: none;
+    outline: none;
+}
+
+.address-wrapper input:nth-child(2) {
+    margin-bottom: 5px;
+}
+
+.address-wrapper .img-button {
+    background-repeat: no-repeat !important;
+    background-position: center !important;
+}
+
+.input-wrapper {
+    width: 95%;
+    display: flex;
+    flex-flow: column;
+}
+
+.address-wrapper .close-button {
+    width: 20px;
+    height: 20px;
+}
+
+

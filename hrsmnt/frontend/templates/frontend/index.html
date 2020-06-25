@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <link rel="icon" href="/media/common/favicon.ico" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#000000" />
+    <meta
+      name="description"
+      content="HRSMNT SHOP"
+    />
+    <link rel="apple-touch-icon" href="/media/common/logo192.png" />
+    <link rel="manifest" href="/media/common/manifest.json" />
+    <title>HRSMNT</title>
+  </head>
+  <body>
+    <noscript>Похоже, у вас выключен javascript. Он необходим для работы приложения</noscript>
+    <div id="root"></div>
+    {% load static %}
+    <div id="message"></div>
+    <script src="{% static "frontend/main.js" %}"></script>
+  </body>
+</html>

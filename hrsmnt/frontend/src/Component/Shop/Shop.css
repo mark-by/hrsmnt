@@ -1,0 +1,6 @@
+.container.shop {
+    flex-flow: row;
+    justify-content: space-around;
+    padding-top: 30px;
+    flex-wrap: wrap;
+}

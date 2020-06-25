@@ -1,0 +1,40 @@
+.contacts-wrapper {
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 9px 9px 18px rgba(217, 217, 217, 0.7);
+}
+
+.contacts-wrapper a {
+    color: blueviolet;
+    margin: 0 10px;
+}
+
+.contacts-title {
+    font-weight: bold;
+    margin: 10px 0;
+}
+
+.contacts-subtitle {
+    width: max-content;
+    color: gray;
+    font-weight: 500;
+}
+
+.email {
+    margin: 10px;
+}
+
+.contacts {
+    padding: 30px;
+    align-items: center;
+}
+
+.contacts a {
+    color: blueviolet;
+}
+
+.emails {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+}

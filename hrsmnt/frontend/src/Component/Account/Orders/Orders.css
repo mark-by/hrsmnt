@@ -1,0 +1,19 @@
+.history-order .bottom-wrapper {
+    justify-content: space-between;
+    padding: unset;
+    margin: unset;
+}
+
+.history-order {
+    background: white;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 9px 9px 18px rgba(217, 217, 217, 0.7);
+    margin-bottom: 10px;
+}
+
+@media screen and (max-width: 576px) {
+    .history-order .bottom-wrapper {
+        font-size: 14px;
+    }
+}

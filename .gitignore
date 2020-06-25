@@ -1,0 +1,9 @@
+.idea/*
+env/*
+*/*/__pycache__/*
+hrsmnt/frontend/.idea/*
+hrsmnt/frontend/node_modules/*
+*/*/*/__pycache__/*
+*/__pycache__/*
+hrsmnt/hrsmnt/local_settings.py
+/hrsmnt/media/items/*

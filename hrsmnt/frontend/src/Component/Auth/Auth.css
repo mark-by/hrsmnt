@@ -1,0 +1,44 @@
+.auth-form {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+    background: white;
+    width: 80%;
+    max-width: 350px;
+    position: fixed;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 9px 9px 18px rgba(217, 217, 217, 0.7);
+    border-radius: 5px;
+    padding: 15px;
+}
+
+.auth-form input {
+    height: 25px;
+}
+
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-row-gap: 10px;
+    width: 100%;
+}
+
+main.auth a {
+    color: blueviolet;
+    display: block;
+    margin-top: 10px;
+}
+
+.auth-form .bottom-wrapper {
+    justify-content: space-between;
+    align-items: center;
+}
+
+.greetings {
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+    overflow-x: hidden;
+}

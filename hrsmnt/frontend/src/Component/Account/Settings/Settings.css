@@ -1,0 +1,34 @@
+.settings-main-part {
+    padding-top: 20px;
+    width: 100%;
+}
+
+.settings-username {
+    font-weight: bold;
+    font-size: 22px;
+}
+
+.bottom-wrapper {
+    padding-top: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.account-window {
+    display: flex;
+    flex-flow: column;
+    width: 100%;
+    align-items: center;
+}
+
+.settings form {
+    width: 100%;
+    max-width: 545px;
+}
+
+@media screen and (max-width: 768px){
+    .settings-main-part {
+        width: unset;
+    }
+}

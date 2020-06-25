@@ -1,0 +1,45 @@
+.size-grid {
+    position: absolute;
+    background: white;
+    border-radius: 15px;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    padding: 15px;
+    box-shadow: 0 0 30px rgba(0, 0, 0, 0.3);
+}
+
+.size-grid-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10;
+}
+
+.size-grid__title {
+    font-weight: bold;
+}
+
+.size-grid__close-button {
+    position: absolute;
+    right: 0;
+    top: 0;
+    transform: translate(35%, -35%);
+    background: white;
+    padding: 3px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+}
+
+.grid {
+    display: grid;
+    grid-row-gap: 10px;
+    grid-column-gap: 10px;
+    justify-items: center;
+    font-size: 16px;
+}
