@@ -28,3 +28,7 @@ export const FETCH_FAVORITES        = 'favorites/fetch';
 export const ADD_FAVORITE           = 'favorites/add';
 export const DELETE_FAVORITE        = 'favorites/delete';
 
+export const FETCH_SUGGESTIONS      = 'suggestions/fetch';
+export const ENABLE_SUGGESTIONS_LOADING = 'suggestions/enable_loading';
+export const DISABLE_SUGGESTIONS_LOADING = 'suggestions/disable_loading';
+export const RESET_SUGGESTIONS      = 'suggestions/reset';

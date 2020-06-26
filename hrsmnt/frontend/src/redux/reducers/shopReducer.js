@@ -1,8 +1,10 @@
-import {FETCH_ITEM, FETCH_ITEMS, ITEM_TOGGLE_FAVORITE} from "../types";
+import {FETCH_ITEM, FETCH_ITEMS, FETCH_SUGGESTIONS, ITEM_TOGGLE_FAVORITE} from "../types";
 
 const initialState = {
     list: [],
-    isFetched: false
+    isFetched: false,
+    suggestionsList: [],
+    suggestionsFetched: false
 }
 
 export default function shopReducer(state = initialState, action) {
@@ -26,7 +28,7 @@ export default function shopReducer(state = initialState, action) {
                         } else {
                             return item;
                         }
-                    })
+                    }), suggestionsFetched: false
                 }
             } else {
                 return {...state, list: [...state.list, {...action.payload, verbose_fetched: true}]}

@@ -93,7 +93,6 @@ export default function Item(props) {
                                 <p>{item.type}</p>
                                 <div className="item-price">{item.price}&nbsp;Р</div>
                             </div>
-                            <div className="item-delivery">По Москве доставим завтра или позже</div>
                         </div>
                         <div className="item-control-part">
                             <Select options={selectOptions}
@@ -119,11 +118,11 @@ export default function Item(props) {
                     </div>
                     <div className="item-about-part">
                         <div className="title-about">О товаре</div>
-                        <div className="item-about">{item.description}</div>
+                        <div className="item-about" dangerouslySetInnerHTML={{__html: item.description}}/>
                     </div>
                 </div>
             </div>
-            <Suggestions/>
+            {item.verbose_fetched ? <Suggestions item={item}/> : ""}
         </main>
     )
 }

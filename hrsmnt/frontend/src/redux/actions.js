@@ -7,12 +7,12 @@ import {
     DELETE_ADDRESS,
     DELETE_FAVORITE,
     DELETE_ITEM_FROM_BAG,
-    DELETE_USER_DATA,
+    DELETE_USER_DATA, DISABLE_SUGGESTIONS_LOADING, ENABLE_SUGGESTIONS_LOADING,
     END_LOADING,
     FETCH_ADDRESSES,
     FETCH_FAVORITES,
     FETCH_ITEM,
-    FETCH_ITEMS,
+    FETCH_ITEMS, FETCH_SUGGESTIONS,
     FETCH_USER_DATA,
     HIDE_MESSAGE,
     ITEM_TOGGLE_FAVORITE,
@@ -32,7 +32,7 @@ import {
     apiGetAddresses,
     apiGetFavorites,
     apiGetItem,
-    apiGetItems,
+    apiGetItems, apiSuggestions,
     apiUserData,
     apiVerifyEmail
 } from "../backend/api";
@@ -141,6 +141,7 @@ export const fetchItem = (id, setError) => {
 
 export const toggleFavoriteItem = (item, value) => ({type: ITEM_TOGGLE_FAVORITE, payload: {item, value}})
 
+
 //Favorites
 
 export const fetchFavorites = (setFetched) => {
@@ -162,6 +163,7 @@ export const fetchFavorites = (setFetched) => {
 
 export const addFavorite = (item) => {
     return async dispatch => {
+        dispatch(enableLoading());
         try {
             const response = await csrfAxios(apiAddFavorite, {id: item.id});
             if (response.status === 200) {
@@ -174,6 +176,22 @@ export const addFavorite = (item) => {
         } catch (e) {
             dispatch(showMessage({value: "Не удалось добавить", type: msgTypeFail}));
         }
+        dispatch(disableLoading());
     }
 }
 
+
+export const fetchSuggestion = (item) => {
+    return async dispatch => {
+        dispatch({type: ENABLE_SUGGESTIONS_LOADING});
+        try {
+            const response = await axios.get(apiSuggestions, {params: {type: item.type, id: item.id}});
+            if (response.status === 200) {
+                dispatch({type: FETCH_SUGGESTIONS, payload: response.data});
+            }
+        } catch (e) {
+            dispatch(showMessage({value: "Что-то пошло не так", type: msgTypeFail}))
+        }
+        dispatch({type: DISABLE_SUGGESTIONS_LOADING});
+    }
+}

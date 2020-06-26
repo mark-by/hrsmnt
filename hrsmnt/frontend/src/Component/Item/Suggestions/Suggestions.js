@@ -1,25 +1,43 @@
 import React from "react";
 import './Suggestions.css'
 import {Link} from "react-router-dom";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchSuggestion} from "../../../redux/actions";
 
-export default function Suggestions() {
-    const data = [
-        {id: 1, image: "green", title: "Green"},
-        {id: 2, image: "yellow", title: "Yell"},
-        {id: 3, image: "black", title: "Blackie"},
-        {id: 4, image: "blue", title: "Bluups"},
-        {id: 5, image: "orange", title: "Ora"},
-    ]
+export default function Suggestions(props) {
+    const items = useSelector(state => state.suggestions.list);
+    // const isFetched = useSelector(state => state.shop.suggestionsFetched);
+    let [isFetched, toggleFetched] = React.useState(false);
+    const loading = useSelector(state => state.suggestions.loading);
+    const dispatch = useDispatch();
+
+    if (!loading && !isFetched) {
+        dispatch(fetchSuggestion(props.item));
+        toggleFetched(true);
+    }
+
+    if (loading) {
+        return (
+            <div className="suggestions">
+                <p>Загрузка...</p>
+            </div>
+        );
+    }
+
+    if (!items || items.length === 0) {
+        return '';
+    }
 
     return (
         <div className="suggestions">
             <div className="suggestions-title">Вам также может понравиться</div>
             <div className="suggestions-container">
-                {data.map((item, idx) => {
+                {items.map((item, idx) => {
                     return (
                         <Link to={"/item/" + item.id} key={idx}>
                             <div className="suggestion-item">
-                                <div className="suggestion-item-image" style={{background: item.image}}/>
+                                <img className="suggestion-item-image" src={`/resize-img/w200${item.front_image}`}
+                                     srcSet={`/resize-img/w200${item.front_image}, /resize-img/w250${item.front_image} 1.5x, /resize-img/w300${item.front_image} 2x`}/>
                                 <div className="suggestion-item-title">{item.title}</div>
                             </div>
                         </Link>

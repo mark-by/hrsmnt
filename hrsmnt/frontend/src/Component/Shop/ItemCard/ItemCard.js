@@ -11,10 +11,8 @@ export default function ItemCard(props) {
     }
 
     function srcSet(image) {
-        return `${resize(330, image)}, ${resize(450, image)} 1.5x, ${resize(660, image)} 2x`;
+        return `${resize(300, image)}, ${resize(400, image)} 1.5x, ${resize(600, image)} 2x`;
     }
-
-    loadImage(resize(500, props.data.back_image), srcSet(props.data.back_image));
 
     return (
         <Link to={"/item/" + props.data.id}>

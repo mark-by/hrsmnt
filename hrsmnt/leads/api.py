@@ -4,6 +4,8 @@ from django.core import exceptions
 from rest_framework import status
 from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
+from django.db.models import Q
+import random
 from .serializers import *
 
 
@@ -120,6 +122,12 @@ def add_favorite(request):
 
 @api_view(['GET'])
 def suggestion(request):
-    items = Item.objects.filter(type__title=request.data['type'])[:5]
+    max_len = 4
+    items = Item.objects.filter(Q(type__title=request.GET['type']) & ~Q(id=request.GET['id']) & Q(active=True))[:max_len]
+    if not items:
+        items = list(Item.objects.filter(~Q(id=request.GET['id']) & Q(active=True)))
+        if len(items) < max_len:
+            max_len = len(items)
+        items = random.sample(items, max_len)
     serializer = SimpleItemSerializer(items, many=True)
     return Response(serializer.data, status=status.HTTP_200_OK)
