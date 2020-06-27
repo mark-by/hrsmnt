@@ -30,9 +30,6 @@ export default function Slider(props) {
         for (let i = 0; i < props.images.length; i++) {
             loadImage(resize(500, i), srcSet(i));
         }
-        for (let i = 0; i < props.images.length; i++) {
-            loadImage(image(i));
-        }
     }
 
     const zoomedImageRef = useRef(null);
