@@ -45,8 +45,12 @@ export default function Slider(props) {
         toggleZoom(prev=> ({...prev, left: x, top: y, size: zoomSize, image: image}))
         const width = e.target.naturalWidth * zoomKoef;
         zoomedImageRef.current.width = width;
-        zoomedImageRef.current.style.left = `-${(zoomedImageRef.current.width / e.target.width) * offsetX - zoomSize / 2}px`;
-        zoomedImageRef.current.style.top = `-${(zoomedImageRef.current.height / e.target.height) * offsetY - zoomSize / 2}px`;
+        const zoomedImageWidth = zoomedImageRef.current.width;
+        const zoomedImageHeight = zoomedImageRef.current.height;
+        const left = (zoomedImageWidth / e.target.width) * offsetX;
+        const top = (zoomedImageHeight / e.target.height) * offsetY;
+        zoomedImageRef.current.style.left = `-${left + zoomSize/2 < zoomedImageWidth ? left - zoomSize/2 : zoomedImageWidth - zoomSize}px`;
+        zoomedImageRef.current.style.top = `-${top + zoomSize/2 < zoomedImageHeight ? top - zoomSize/2 : zoomedImageHeight - zoomSize}px`;
     }
 
     function zoomStop() {
