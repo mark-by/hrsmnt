@@ -13,9 +13,11 @@ export const inputChangeHandler = (event, stateHandler, localStorageKey) => {
 }
 
 export function csrfAxios(url, data, config) {
-   const csrfToken = Cookies.get('csrftoken');
-   if (!config) {config = {}}
-   return axios.post(url, data, {...config, headers: {...config.headers, 'X-CSRFToken': csrfToken}});
+    const csrfToken = Cookies.get('csrftoken');
+    if (!config) {
+        config = {}
+    }
+    return axios.post(url, data, {...config, headers: {...config.headers, 'X-CSRFToken': csrfToken}});
 }
 
 export function isLogged() {
@@ -26,7 +28,8 @@ export function isLogged() {
 function _load(src, srcSet) {
     const image = new Image();
     image.src = src;
-    image.srcset = srcSet;
+    if (srcSet)
+        image.srcset = srcSet;
 }
 
 export async function loadImage(src, srcSet) {
