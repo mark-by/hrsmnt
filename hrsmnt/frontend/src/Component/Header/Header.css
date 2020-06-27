@@ -9,7 +9,11 @@ header {
 
 header .container {
     height: 100%;
+    padding: unset;
     z-index: 9000;
+    flex-flow: row;
+    align-items: center;
+    justify-content: space-between;
 }
 
 .logo {
@@ -18,11 +22,6 @@ header .container {
     cursor: pointer;
 }
 
-header .row {
-    align-items: center;
-    justify-content: space-between;
-    height: 100%;
-}
 
 .header-left-container {
     display: flex;

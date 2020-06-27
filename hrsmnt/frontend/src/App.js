@@ -1,7 +1,7 @@
 import React from 'react';
 import Header from "./Component/Header/Header";
-import {connect} from 'react-redux';
-import {Switch, Route, Redirect} from 'react-router-dom'
+import {useDispatch, useSelector} from 'react-redux';
+import {Switch, Route} from 'react-router-dom'
 import Shop from "./Component/Shop/Shop";
 import Main from "./Component/Main/Main";
 import Item from "./Component/Item/Item";
@@ -9,17 +9,22 @@ import Account from "./Component/Account/Account";
 import Page404 from "./Component/404Page/404Page";
 import Contacts from "./Component/Contacts/Contacts";
 import Auth from "./Component/Auth/Auth";
-import {isLogged} from "./utils";
 import MessageRouter from "./Component/MessagePage/MessageRouter";
 import VerifyEmail from "./Component/VerifyEmail";
 import Bag from "./Component/Bag/Bag";
-import Message from "./Component/Message/Message";
 import ForgotPass from "./Component/ForgotPass";
 import ConfirmPass from "./Component/ConfirmPass";
-import MessagePage from "./Component/MessagePage/MessagePage";
 import About from "./Component/About";
+import {restoreBag} from "./redux/actions";
 
-function App(props) {
+export default function App() {
+    const bagIsRestored = useSelector(state => state.bag.restored);
+    const dispatch = useDispatch();
+
+    if (!bagIsRestored) {
+        dispatch(restoreBag());
+    }
+
     return (
         <>
             <Header/>
@@ -41,10 +46,3 @@ function App(props) {
         </>
     );
 }
-
-export default connect(
-    state => ({
-        testStore: state
-    }),
-    dispatch => ({})
-)(App);

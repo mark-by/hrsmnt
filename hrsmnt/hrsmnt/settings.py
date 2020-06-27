@@ -129,6 +129,8 @@ MEDIA_URL = '/media/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = '/static/'
 
+DEFAULT_FROM_EMAIL = 'hrsmnt@hrsmnt.ru'
+
 try:
     from hrsmnt.local_settings import *
 except ImportError:

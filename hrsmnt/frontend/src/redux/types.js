@@ -1,6 +1,6 @@
 export const ADD_ITEM_TO_BAG        = 'BAG/ADD_ITEM_TO_BAG';
 export const DELETE_ITEM_FROM_BAG   = 'BAG/DELETE_ITEM_FROM_BAG';
-export const CLEAR_ERROR            = 'bag/clear-error'
+export const RESTORE_BAG            = 'bag/restore';
 
 export const FETCH_USER_DATA        = 'USER/FETCH_USER_DATA';
 export const SET_USER_DATA          = 'USER/SET_USER_DATA';

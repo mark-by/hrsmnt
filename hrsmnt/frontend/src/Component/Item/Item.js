@@ -106,7 +106,7 @@ export default function Item(props) {
                                     selectHandler={selectSize}/>
                             <div className="row item-main-wrapper">
                                 <div className="button black" onClick={() => addToBag(item)}>Добавить в корзину </div>
-                                <img src={isFavorite ? fillStar : star} className="img-button" alt="добавить в избранное" onClick={() => addFavoriteHandler(item)}/>
+                                <img src={isFavorite && isLogged() ? fillStar : star} className="img-button" alt="добавить в избранное" onClick={() => addFavoriteHandler(item)}/>
                             </div>
                             {item.parameters && item.parameters.length > 0 ? <div className="button" style={{
                                 background: "#ababab",

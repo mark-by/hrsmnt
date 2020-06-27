@@ -10,6 +10,7 @@ const Bag = ({items, deleteItem}) => {
     const templateColumns = "repeat(5, 1fr)";
     const columnsGap = "10px";
 
+
     if (items.length === 0) {
         return  <main className="container bag"><div className="bag-message">Здесь пусто :(<br/><br/>Добавляйте товары из <Link to="/shop">магазина</Link> в корзину, чтобы потом оформить заказ!</div></main>
     } else {

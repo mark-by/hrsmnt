@@ -1,9 +1,15 @@
 import axios from 'axios'
 import Cookies from 'js-cookie'
 
-export const inputChangeHandler = (event, stateHandler) => {
+export const inputChangeHandler = (event, stateHandler, localStorageKey) => {
     event.persist();
-    stateHandler(prev => ({...prev, [event.target.name]: event.target.value}))
+    stateHandler(prev => {
+        const newState = {...prev, [event.target.name]: event.target.value};
+        if (localStorageKey) {
+            localStorage.setItem(localStorageKey, JSON.stringify(newState));
+        }
+        return newState;
+    })
 }
 
 export function csrfAxios(url, data, config) {

@@ -13,22 +13,21 @@ export default function Header(props) {
     return (
         <header>
             <div className="container">
-                <div className="row">
-                    <div className="header-left-container">
-                        <img src={moreButton} alt="menu" className="img-button menu-button" onClick={() => toggleMenu(prev => !prev)}/>
-                    </div>
-                    <Link to="/">
-                        <div className="logo">HRSMNT</div>
+                <div className="header-left-container">
+                    <img src={moreButton} alt="menu" className="img-button menu-button"
+                         onClick={() => toggleMenu(prev => !prev)}/>
+                </div>
+                <Link to="/">
+                    <div className="logo">HRSMNT</div>
+                </Link>
+                <div className="header-right-container">
+                    {/*<img src={search} alt="search" className="img-button search-button"/>*/}
+                    <Link to="/bag">
+                        <div className="bag-wrapper">
+                            <img src={bag} alt="bag" className="img-button bag-button"/>
+                            {bagItems.length > 0 && <div className="bag-counter">{bagItems.length}</div>}
+                        </div>
                     </Link>
-                    <div className="header-right-container">
-                        {/*<img src={search} alt="search" className="img-button search-button"/>*/}
-                        <Link to="/bag">
-                            <div className="bag-wrapper">
-                                <img src={bag} alt="bag" className="img-button bag-button"/>
-                                {bagItems.length > 0 && <div className="bag-counter">{bagItems.length}</div>}
-                            </div>
-                        </Link>
-                    </div>
                 </div>
                 {menuOpened && <Menu toggle={toggleMenu}/>}
             </div>

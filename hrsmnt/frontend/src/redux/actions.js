@@ -3,21 +3,18 @@ import {
     ADD_FAVORITE,
     ADD_ITEM_TO_BAG,
     CHECK_EMAIL_TOKEN,
-    CLEAR_ERROR,
     DELETE_ADDRESS,
     DELETE_FAVORITE,
     DELETE_ITEM_FROM_BAG,
     DELETE_USER_DATA, DISABLE_SUGGESTIONS_LOADING, ENABLE_SUGGESTIONS_LOADING,
     END_LOADING,
-    FETCH_ADDRESSES,
     FETCH_FAVORITES,
     FETCH_ITEM,
     FETCH_ITEMS, FETCH_SUGGESTIONS,
     FETCH_USER_DATA,
     HIDE_MESSAGE,
     ITEM_TOGGLE_FAVORITE,
-    NONE_DISPLAY_MESSAGE,
-    RERENDER_ADDRESSES,
+    RESTORE_BAG,
     SAVE_ADDRESS,
     SET_ADDRESSES,
     SET_USER_DATA,
@@ -28,7 +25,6 @@ import {
 import axios from 'axios';
 import {
     apiAddFavorite,
-    apiDeleteFavorite,
     apiGetAddresses,
     apiGetFavorites,
     apiGetItem,
@@ -42,6 +38,16 @@ import {msgTypeFail} from "../Component/Message/types";
 //BAG
 export const addItemToBag = (item) => ({type: ADD_ITEM_TO_BAG, payload: item})
 export const deleteItemFromBag = (item) => ({type: DELETE_ITEM_FROM_BAG, payload: item})
+export const restoreBag = () => {
+    return async dispatch => {
+        const bag = localStorage.getItem('bag');
+        if (bag) {
+            dispatch({type: RESTORE_BAG, payload: JSON.parse(bag)});
+        } else {
+            dispatch({type: RESTORE_BAG, payload: []});
+        }
+    }
+}
 
 //USER
 export const fetchUserData = () => {
@@ -163,7 +169,6 @@ export const fetchFavorites = (setFetched) => {
 
 export const addFavorite = (item) => {
     return async dispatch => {
-        dispatch(enableLoading());
         try {
             const response = await csrfAxios(apiAddFavorite, {id: item.id});
             if (response.status === 200) {
@@ -176,7 +181,6 @@ export const addFavorite = (item) => {
         } catch (e) {
             dispatch(showMessage({value: "Не удалось добавить", type: msgTypeFail}));
         }
-        dispatch(disableLoading());
     }
 }
 
@@ -195,3 +199,4 @@ export const fetchSuggestion = (item) => {
         dispatch({type: DISABLE_SUGGESTIONS_LOADING});
     }
 }
+

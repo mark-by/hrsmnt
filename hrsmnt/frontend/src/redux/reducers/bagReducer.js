@@ -1,12 +1,19 @@
-import {ADD_ITEM_TO_BAG, CLEAR_ERROR, DELETE_ITEM_FROM_BAG} from "../types";
-const initialState = {list: []}
+import {ADD_ITEM_TO_BAG, DELETE_ITEM_FROM_BAG, RESTORE_BAG} from "../types";
+const initialState = {list: [], restored: false}
 
 export const bagReducer = (state = initialState, action) => {
+    let newList;
     switch (action.type) {
         case ADD_ITEM_TO_BAG:
-            return {list: [...state.list, action.payload]};
+            newList = [...state.list, action.payload];
+            localStorage.setItem('bag', JSON.stringify(newList))
+            return {list: newList};
         case DELETE_ITEM_FROM_BAG:
-            return {list: state.list.filter(item => item !== action.payload)}
+            newList = state.list.filter(item => item !== action.payload);
+            localStorage.setItem('bag', JSON.stringify(newList))
+            return {list: newList}
+        case RESTORE_BAG:
+            return {list: action.payload, restored: true}
         default: return state;
     }
 }
