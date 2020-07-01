@@ -36,3 +36,6 @@ export async function loadImage(src, srcSet) {
     const res = await _load(src, srcSet);
 }
 
+export function toggleTitle(stateHandler) {
+    stateHandler(prev => ({...prev, isOpen: !prev.isOpen}));
+}

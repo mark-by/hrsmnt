@@ -1,0 +1,49 @@
+.order-params-title {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    cursor: pointer
+}
+
+.order-params-title * {
+    margin-left: 10px;
+}
+
+.order-params-title .arrow {
+    position: relative;
+    bottom: 2px;
+}
+
+.order-params-title p:nth-child(1) {
+    margin: unset;
+}
+
+.order .react-dadata__container {
+    margin-left: 10px;
+    max-width: 400px;
+}
+
+.order label {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.order .react-dadata__input {
+    border: 1px gray solid;
+    border-radius: 2px;
+}
+
+.geo {
+    margin-left : 10px;
+    /*flex-grow: 1;*/
+}
+
+@media screen and (max-width: 768px) {
+
+
+    .geo {
+        margin-top: 10px;
+        margin-left: unset;
+    }
+}
+

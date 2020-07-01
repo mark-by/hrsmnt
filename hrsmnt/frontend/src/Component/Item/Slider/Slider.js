@@ -42,7 +42,7 @@ export default function Slider(props) {
         const offsetY = e.nativeEvent.offsetY;
         const zoomKoef = (zoomSettings.zoom / 10);
         const zoomSize = 10 * zoomSettings.size;
-        toggleZoom(prev=> ({...prev, left: x, top: y, size: zoomSize, image: image}))
+        toggleZoom(prev=> ({active: true, left: x, top: y, size: zoomSize, image: image}))
         const width = e.target.naturalWidth * zoomKoef;
         zoomedImageRef.current.width = width;
         const zoomedImageWidth = zoomedImageRef.current.width;
@@ -79,7 +79,6 @@ export default function Slider(props) {
                         justifyContent: "center",
                         cursor: "zoom-out"
                     }}><img src={zoomImage}
-                            onMouseEnter={e => toggleZoom(prev => ({...prev, active: true}))}
                             onMouseMove={e => zoomStart(e, zoomImage)}
                             onMouseLeave={e => zoomStop(e)}
                             style={{
@@ -99,7 +98,6 @@ export default function Slider(props) {
                             <img className={"slider-item-image" + (idx === 1 ? " second-item-image" : "")}
                                  srcSet={srcSet(idx)}
                                  src={resize(500, idx)}
-                                 onMouseEnter={e => toggleZoom(prev => ({...prev, active: true}))}
                                  onMouseMove={e => {
                                      zoomStart(e, image(idx))
                                  }}

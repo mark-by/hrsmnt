@@ -1,8 +1,8 @@
 import {
     ADD_ADDRESS,
     ADD_FAVORITE,
-    ADD_ITEM_TO_BAG,
-    CHECK_EMAIL_TOKEN,
+    ADD_ITEM_TO_BAG, BLUR_APP,
+    CHECK_EMAIL_TOKEN, CLEAR_BAG,
     DELETE_ADDRESS,
     DELETE_FAVORITE,
     DELETE_ITEM_FROM_BAG,
@@ -13,13 +13,13 @@ import {
     FETCH_ITEMS, FETCH_SUGGESTIONS,
     FETCH_USER_DATA,
     HIDE_MESSAGE,
-    ITEM_TOGGLE_FAVORITE,
+    ITEM_TOGGLE_FAVORITE, PAYMENT_START, PAYMENT_START_LOADING, PAYMENT_STOP, PAYMENT_STOP_LOADING,
     RESTORE_BAG,
     SAVE_ADDRESS,
     SET_ADDRESSES,
     SET_USER_DATA,
     SHOW_MESSAGE,
-    START_LOADING,
+    START_LOADING, UNBLUR_APP,
     UPDATE_ADDRESS
 } from "./types";
 import axios from 'axios';
@@ -48,6 +48,9 @@ export const restoreBag = () => {
         }
     }
 }
+
+
+export const clearBag = () => ({type: CLEAR_BAG})
 
 //USER
 export const fetchUserData = () => {
@@ -114,6 +117,8 @@ export const showMessage = (options) => {
         setTimeout(() => dispatch(hideMessage()), options.time ? options.time : 2000)
     }
 }
+export const blur = () => ({type: BLUR_APP});
+export const unblur = () => ({type: UNBLUR_APP});
 
 
 //SHOP
@@ -144,6 +149,7 @@ export const fetchItem = (id, setError) => {
         dispatch(disableLoading());
     }
 }
+
 
 export const toggleFavoriteItem = (item, value) => ({type: ITEM_TOGGLE_FAVORITE, payload: {item, value}})
 
@@ -200,3 +206,17 @@ export const fetchSuggestion = (item) => {
     }
 }
 
+export const paymentStart = (token, orderId, email, centToken) => {
+    return async dispatch => {
+        dispatch(blur());
+        dispatch({type: PAYMENT_START, payload: {token, orderId, email, centToken}})
+    }
+}
+
+export const paymentStop = () => {
+    return async dispatch => {
+        dispatch(unblur());
+        dispatch({type: PAYMENT_STOP})
+    }
+}
+export const paymentStopLoading = () => ({type: PAYMENT_STOP_LOADING});

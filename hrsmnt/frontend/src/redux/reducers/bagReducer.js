@@ -1,4 +1,4 @@
-import {ADD_ITEM_TO_BAG, DELETE_ITEM_FROM_BAG, RESTORE_BAG} from "../types";
+import {ADD_ITEM_TO_BAG, CLEAR_BAG, DELETE_ITEM_FROM_BAG, RESTORE_BAG} from "../types";
 const initialState = {list: [], restored: false}
 
 export const bagReducer = (state = initialState, action) => {
@@ -14,6 +14,9 @@ export const bagReducer = (state = initialState, action) => {
             return {list: newList}
         case RESTORE_BAG:
             return {list: action.payload, restored: true}
+        case CLEAR_BAG:
+            localStorage.removeItem('bag');
+            return {list: [], restored: true};
         default: return state;
     }
 }

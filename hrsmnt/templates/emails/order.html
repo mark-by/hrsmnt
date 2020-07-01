@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h2>Спасибо за заказ!</h2>
+<p>Номер заказа: {{ order.id }}</p>
+<p>Cпособ доставки: {{ delivery_type }}</p>
+<p>Ваш телефон: {{ order.tel }}</p>
+<p>Способ оплаты: {{ pay_way }}</p>
+{% if delivery_type != metro %}
+    <p>Адрес: {{ order.address }}</p>
+{% endif %}
+{% if delivery_type == post %}
+    <p>Почтовый индекс: {{ order.postal_code }}</p>
+    <p>Имя: {{ order.first_name }}</p>
+    <p>Фамилия: {{ order.second_name }}</p>
+    <p>Отчество: {{ order.patronymic }}</p>
+{% endif %}
+<p>Ваш заказ:</p>
+<div>
+ <p><b>Товар Размер Цена</b></p>
+    {% for item in items %}
+        <p>{{ item.item.title }}  {{ item.size.title }}  {{ item.item.price }}</p>
+    {% endfor %}
+</div>
+<p><b>Итого: {{ order.total_price }} р</b></p>
+<p>Мы с Вами свяжемся, чтобы уточнить детали заказа</p>
+<p>Если есть вопросы или Вы указали что-то не так, то пишите на <a href="mailto:hrsmnt@hrsmnt.ru">hrsmnt@hrsmnt.ru</a> или звоните на <a href="tel:89160373733">+7 916 037-37-33</a></p>
+<p>Спасибо от команды HRSMNT!</p>
+<p>Хорошего Вам настроения!</p>
+</body>
+</html>

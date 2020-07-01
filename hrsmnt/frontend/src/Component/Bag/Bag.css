@@ -10,7 +10,7 @@
     width: 100%;
 }
 
-.bag form, .bag-window-title{
+.content-bag, .bag-window-title{
     width: 100%;
     max-width: 545px;
 }

@@ -16,7 +16,7 @@ urlpatterns = router.get_urls() + [
     path('api/verify-email', VerifyEmailView.as_view()),
 
     path('api/user_data', user_data),
-    path('api/settings', settings),
+    path('api/settings', change_settings),
     path('api/change-password', PasswordChangeView.as_view()),
     path('api/reset-password', PasswordResetView.as_view()),
     path('api/confirm-password', PasswordResetConfirmView.as_view()),
@@ -32,6 +32,10 @@ urlpatterns = router.get_urls() + [
     path('api/get-favorites', get_favorites),
     path('api/add-favorite', add_favorite),
     path('api/get-suggestions', suggestion),
+
+    path('api/create_pay', pay),
+
+    path('pay_notify', pay_notify),
 
     path('api/ok', ok, name='account_email_verification_sent'),
 ] + static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)

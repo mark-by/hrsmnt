@@ -6,16 +6,16 @@ export default function Input(props) {
     let options = {}
     if (props.options) {
         options = props.options;
-    } else {
-        options = {
-            type: props.type,
-            name: props.name,
-            value: props.value,
-            required: props.required,
-            placeholder: props.placeholder,
-            style: props.style,
-            label: props.label
-        }
+    }
+    options = {
+        ...options,
+        type: props.type ? props.type : options.type,
+        name: props.name ? props.name : options.name,
+        value: props.value ? props.value : options.value,
+        required: props.required ? props.required : options.required,
+        placeholder: props.placeholder ? props.placeholder : options.placeholder,
+        style: props.style ? props.style : options.style,
+        label: props.label ? props.label : options.label
     }
 
     const containerStyle = {
@@ -55,17 +55,26 @@ export default function Input(props) {
                              defaultValue={options.value}
                              placeholder={options.placeholder}
                              readOnly={options.readOnly}
-                             onChange={e => inputChangeHandler(e, props.stateHandler)}
+                             checked={props.checked}
+                             onChange={e => props.onChange ? props.onChange(e) : inputChangeHandler(e, props.stateHandler)}
                              style={{...inputStyle, ...props.inputStyle}}
             />
     }
 
     return (
         <div style={options.style}>
-            {props.errors ? props.errors.map((error, idx) => <FormError key={idx}>{error}</FormError>) : <></>}
+            {props.errors && props.errors.map((error, idx) => <FormError key={idx}>{error}</FormError>)}
             <div style={containerStyle}>
                 <label style={labelStyle}>{options.label}</label>
-                {content}
+                <div style={{position: "relative"}}>
+                    {content}
+                    {props.hint && <p style={{
+                        color: "gray",
+                        fontSize: "12px",
+                        margin: "2px 0 0 10px",
+                        position: "absolute"
+                    }}>{props.hint}</p>}
+                </div>
             </div>
         </div>
     )

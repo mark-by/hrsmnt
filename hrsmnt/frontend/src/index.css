@@ -133,6 +133,11 @@ input, select {
     border-radius: 2px;
 }
 
+.app {
+    transition: filter 0.2s;
+}
+
+
 @media screen and (max-width: 1200px) {
     .container {
         width: 960px;

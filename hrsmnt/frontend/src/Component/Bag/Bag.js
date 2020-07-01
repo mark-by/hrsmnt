@@ -2,20 +2,27 @@ import React from "react";
 import './Bag.css'
 import ItemHistory from "../Account/ItemHistory/ItemHistory";
 import {Link} from "react-router-dom";
-import {connect} from "react-redux";
+import {connect, useSelector} from "react-redux";
 import {deleteItemFromBag} from "../../redux/actions";
+import Order from "../Order/Order";
 
 const Bag = ({items, deleteItem}) => {
     let total = 0;
     const templateColumns = "repeat(5, 1fr)";
     const columnsGap = "10px";
+    const [orderOpen, toggleOrderOpen] = React.useState(false);
+    const payStarted = useSelector(state => state.payment.started);
 
 
     if (items.length === 0) {
-        return  <main className="container bag"><div className="bag-message">Здесь пусто :(<br/><br/>Добавляйте товары из <Link to="/shop">магазина</Link> в корзину, чтобы потом оформить заказ!</div></main>
+        return <main className="container bag">
+            <div className="bag-message">Здесь пусто :(<br/><br/>Добавляйте товары из <Link to="/shop">магазина</Link> в
+                корзину, чтобы потом оформить заказ!
+            </div>
+        </main>
     } else {
         return (
-            <main className="container bag">
+            <main className="container bag" style={{zIndex: payStarted ? "10000" : "0"}}>
                 <div className="bag-window-title" style={{
                     gridTemplateColumns: templateColumns,
                     gridColumnGap: columnsGap
@@ -26,7 +33,7 @@ const Bag = ({items, deleteItem}) => {
                     <p>Цена</p>
                     <p>Удалить</p>
                 </div>
-                <form>
+                <div className="content-bag">
                     <div className={"bag-list"}>
                         {items.map((item, idx) => {
                             total += item.price;
@@ -42,11 +49,14 @@ const Bag = ({items, deleteItem}) => {
                                 key={idx}/>
                         })}
                     </div>
+                    {!orderOpen &&
                     <div className="bottom-wrapper">
-                        <div>Итог: {total} р</div>
-                        <input type="submit" value="Оформить"/>
+                        <p><b>Итого: {total} р</b></p>
+                        <input type="submit" value="Оформить" onClick={() => toggleOrderOpen(true)}/>
                     </div>
-                </form>
+                    }
+                </div>
+                {orderOpen && <Order bagCost={total}/>}
             </main>
         )
     }

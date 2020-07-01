@@ -97,6 +97,7 @@ class ItemImage(models.Model):
 class Counter(models.Model):
     title = models.CharField(max_length=32)
     amount = models.PositiveIntegerField(default=0)
+    reserved = models.PositiveIntegerField(default=0)
     item = models.ForeignKey('Item', related_name='counters', on_delete=models.CASCADE)
 
     @property
@@ -120,12 +121,12 @@ class Item(models.Model):
     front_image = models.ImageField(upload_to=path_for_item_main_image,
                                     help_text='Фото вещи спереди. Размер изображения 250х290')
     back_image = models.ImageField(upload_to=path_for_item_back_image,
-                                   help_text='Фото вещи сзади. Размер изображения 250х290')
+                                   help_text='Фото вещи сзади. Размер изображения 250х290', blank=True, null=True)
     active = models.BooleanField(default=False)
     views_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return self.title
+        return f'{self.title} ({self.price} р)'
 
     class Meta:
         ordering = ['-create_at']
@@ -154,7 +155,7 @@ class ItemGridValue(models.Model):
     class Meta:
         verbose_name = "Значение параметра размерной сетки"
         verbose_name_plural = "Значения параметра размерной сетки"
-        ordering=['priority']
+        ordering = ['priority']
 
 
 class Address(models.Model):
@@ -179,18 +180,79 @@ class Favorite(models.Model):
 
 
 class OrderItem(models.Model):
-    item = models.OneToOneField(Item, on_delete=models.DO_NOTHING)
-    size = models.OneToOneField(Counter, on_delete=models.DO_NOTHING)
+    item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name='Вещь')
+    size = models.ForeignKey(Counter, on_delete=models.CASCADE, verbose_name='Размер')
+    order = models.ForeignKey('Order', related_name='items', on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f'{self.item} | {self.size}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        self.size.reserved += 1
+        self.size.save()
+
+    class Meta:
+        verbose_name = 'Заказанная вещь'
+        verbose_name_plural = 'Заказанные вещи'
 
 
 class Order(models.Model):
-    item = models.ForeignKey(OrderItem, related_name='orders', on_delete=models.DO_NOTHING)
+    delivery_type = models.CharField(max_length=1,
+                                     choices=(('p', 'Почтой'), ('m', 'У метро Кивеская'), ('c', 'Куерьер')),
+                                     verbose_name='Способ доставки')
+    tel = models.CharField(max_length=15, verbose_name='Телефон')
+    email = models.EmailField()
     user = models.ForeignKey(User, related_name='orders', on_delete=models.DO_NOTHING, blank=True, null=True,
-                             default=None)
-    user_name = models.CharField(max_length=32, blank=True, null=True, default=None)
-    user_email = models.EmailField(blank=True, null=True, default=None)
-    user_address = models.TextField(blank=True, null=True, default=None)
+                             default=None, verbose_name='Аккаунт покупателя')
+    status = models.CharField(max_length=1,
+                              choices=(('r', 'Оформлен'), ('p', 'Оплачен'), ('s', 'Созвонились'), ('c', 'Завершен'), ('o', 'Отменен')),
+                              default='r', verbose_name='Статус заказа',
+                              help_text='''Оформлен - человек оформил заказ (требует оплаты налом);
+                                           Оплачен - человек уже оплатил безналом;
+                                           Созвонились - мы созвонились и договорились о встрече, если того требует способ доставки;
+                                           Завершен - Товар отдали, деньги получили, все довольны;
+                                           ''')
+
+    first_name = models.CharField(max_length=32, blank=True, null=True, verbose_name='Имя')
+    second_name = models.CharField(max_length=32, blank=True, null=True, verbose_name='Фамилия')
+    patronymic = models.CharField(max_length=32, blank=True, null=True, verbose_name='Отчество')
+    address = models.TextField(blank=True, null=True, verbose_name='Адрес доставки')
+    postal_code = models.PositiveIntegerField(blank=True, null=True, verbose_name='Индекс')
+    datetime = models.DateTimeField(blank=True, null=True, verbose_name='Дата и время доставки')
+    pay_way = models.CharField(max_length=4, verbose_name='Способ оплаты')
     create_at = models.DateTimeField(auto_now_add=True)
+    description = models.TextField(blank=True, null=True, verbose_name='Комментарий',
+                                   help_text='Можно написать здесь результат созвона')
+    total_price = models.IntegerField(default=0, verbose_name='Итоговая стоимость заказа')
+
+    def __str__(self):
+        status = ''
+        if self.status == 'r':
+            status = 'Оформлен'
+        elif self.status == 'p':
+            status = 'Оплачен'
+        elif self.status == 's':
+            status = 'Созвонились'
+        elif self.status == 'c':
+            status = 'Завершен'
+        elif self.status == 'o':
+            status = 'Отменен'
+
+        return f'Заказ №{self.id} | {status}'
+
+    def save(self, *args, **kwargs):
+        super().save(*args, **kwargs)
+        items = self.items.all()
+        if self.status == 'p' or self.status == 'c':
+            for item in items:
+                item.size.amount -= 1
+                item.size.reserved -= 1
+                item.size.save()
+        elif self.status == 'o':
+            for item in items:
+                item.size.reserved -= 1
+                item.size.save()
 
     class Meta:
         ordering = ['-create_at']

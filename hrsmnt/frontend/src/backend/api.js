@@ -22,3 +22,5 @@ export const apiDeleteFavorite = '/api/delete-favorite';
 export const apiAddFavorite = '/api/add-favorite';
 
 export const apiSuggestions = '/api/get-suggestions';
+
+export const apiCreatePayment = '/api/create_pay';

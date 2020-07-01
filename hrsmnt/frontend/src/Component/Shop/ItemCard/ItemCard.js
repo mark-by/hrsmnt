@@ -16,7 +16,7 @@ export default function ItemCard(props) {
 
     return (
         <Link to={"/item/" + props.data.id}>
-            <div className="item-card" onMouseEnter={ () => setImg(props.data.back_image)} onMouseLeave={() => setImg(props.data.front_image)}>
+            <div className="item-card" onMouseEnter={ () => setImg(props.data.back_image ? props.data.back_image : props.data.front_image)} onMouseLeave={() => setImg(props.data.front_image)}>
                 <img className="item-image" src={resize(500, img)} srcSet={srcSet(img)}/>
                 <p className="item-title">{props.data.title}</p>
                 <div className="item-bottom-wrapper">

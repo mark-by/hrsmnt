@@ -16,9 +16,11 @@ import ForgotPass from "./Component/ForgotPass";
 import ConfirmPass from "./Component/ConfirmPass";
 import About from "./Component/About";
 import {restoreBag} from "./redux/actions";
+import YandexKassa from "./Component/YandexKassa/YandexKassa";
 
 export default function App() {
     const bagIsRestored = useSelector(state => state.bag.restored);
+    const blured = useSelector(state => state.app.blured);
     const dispatch = useDispatch();
 
     if (!bagIsRestored) {
@@ -26,23 +28,28 @@ export default function App() {
     }
 
     return (
-        <>
-            <Header/>
+        <div style={{filter: blured ? "blur(10px)" : ""}} className="app">
             <Switch>
-                <Route exact path="/" component={Main}/>
-                <Route path="/shop" component={Shop}/>
-                <Route path="/item/:id" component={Item}/>
-                <Route path="/account/:tab" component={Account}/>
-                <Route path="/auth/:tab" component={Auth}/>
-                <Route path="/contacts" component={Contacts}/>
-                <Route path="/bag" component={Bag}/>
-                <Route path="/verify-email/:key" component={VerifyEmail}/>
-                <Route path="/message/:page" component={MessageRouter}/>
-                <Route path="/forgot-pass" component={ForgotPass}/>
-                <Route path="/reset-password/:uid/:token" component={ConfirmPass}/>
-                <Route path="/about" component={About}/>
-                <Route component={Page404}/>
+                <Route path="/ya-kassa" component={YandexKassa}/>
+                <>
+                    <Header/>
+                    <Switch>
+                        <Route exact path="/" component={Main}/>
+                        <Route path="/shop" component={Shop}/>
+                        <Route path="/item/:id" component={Item}/>
+                        <Route path="/account/:tab" component={Account}/>
+                        <Route path="/auth/:tab" component={Auth}/>
+                        <Route path="/contacts" component={Contacts}/>
+                        <Route path="/bag" component={Bag}/>
+                        <Route path="/verify-email/:key" component={VerifyEmail}/>
+                        <Route path="/message/:page" component={MessageRouter}/>
+                        <Route path="/forgot-pass" component={ForgotPass}/>
+                        <Route path="/reset-password/:uid/:token" component={ConfirmPass}/>
+                        <Route path="/about" component={About}/>
+                        <Route component={Page404}/>
+                    </Switch>
+                </>
             </Switch>
-        </>
+        </div>
     );
 }

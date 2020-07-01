@@ -7,6 +7,7 @@ import {apiSaveAddress, apiUpdateAddress} from "../../../../backend/api";
 import {useDispatch} from "react-redux";
 import {saveAddress, showMessage, updateAddress} from "../../../../redux/actions";
 import {msgTypeFail, msgTypeSuccess} from "../../../Message/types";
+import {ok} from "../../../../images/images";
 
 export default function ItemAddress(props) {
     const dispatch = useDispatch()
@@ -81,7 +82,7 @@ export default function ItemAddress(props) {
                        onChange={e => inputChangeHandler(e, setInputData)}/>
             </div>
             <span title="Сохранить"><input type="submit" value="" style={{
-                background: "url(/static/frontend/images/ok.svg)",
+                background: `url(${ok})`,
                 backgroundColor: "unset"
             }}
                                            className="img-button"/></span>

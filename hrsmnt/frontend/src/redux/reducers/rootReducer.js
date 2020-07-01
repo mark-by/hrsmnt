@@ -6,6 +6,7 @@ import {addressReducer} from "./addressReducer";
 import shopReducer from "./shopReducer";
 import favoritesReducer from "./favoritesReducer";
 import suggestionsReducer from "./suggestionsReducer";
+import paymentReducer from "./paymentReducer";
 
 export const rootReducer = combineReducers({
     bag: bagReducer,
@@ -14,5 +15,6 @@ export const rootReducer = combineReducers({
     address: addressReducer,
     shop: shopReducer,
     favorites: favoritesReducer,
-    suggestions: suggestionsReducer
+    suggestions: suggestionsReducer,
+    payment: paymentReducer
 })

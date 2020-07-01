@@ -9,6 +9,7 @@ import thunk from "redux-thunk";
 import {HashRouter} from 'react-router-dom'
 import {rootReducer} from "./redux/reducers/rootReducer";
 import Message from "./Component/Message/Message";
+import Payment from "./Component/Payment/Payment";
 
 const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));
 
@@ -20,6 +21,15 @@ ReactDOM.render(
     </Provider>,
     document.getElementById('root')
 );
+
+ReactDOM.render(
+    <Provider store={store}>
+        <HashRouter>
+            <Payment/>
+        </HashRouter>
+    </Provider>,
+    document.getElementById('payment')
+)
 
 ReactDOM.render(
     <Provider store={store}>
