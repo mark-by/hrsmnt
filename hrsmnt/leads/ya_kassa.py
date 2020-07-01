@@ -1,10 +1,11 @@
 from yandex_checkout import Configuration, Payment
+from django.conf import settings
 import uuid
 
 
 def pay(value, order_id):
-    Configuration.account_id = '724176'
-    Configuration.secret_key = 'test_pgXZUajk-HgoY6XlN-TFBjKzguMJkdotVXHQU0uZYpI'
+    Configuration.account_id = settings.YA_ACCOUNT_ID
+    Configuration.secret_key = settings.YA_SECRET_KEY
 
     payment = Payment.create({
         "amount": {
