@@ -229,8 +229,10 @@ def pay(request):
 @csrf_exempt
 def pay_notify(request):
     data = json.loads(request.body)
-    cl = Client(settings.CENTRIFUGO_HOST, api_key=settings.CENTRIFUGO_API_KEY, timeout=1)
-    cl.publish(f'payment{int(data["description"].split("№")[1])}', {'status': data['object']['status']})
+    cl = Client(settings.CENTRIFUGO_HOST, api_key=settings.CENTRIFUGO_API_KEY,
+                timeout=1)
+    cl.publish(f'payment{int(data["object"]["description"].split("№")[1])}',
+               {'status': data['object']['status']})
     response = HttpResponse()
     response.status_code = 200
     return response
