@@ -7,7 +7,7 @@ export default function Payment() {
     const dataPayment = useSelector(state => state.payment.data);
     return (
        <>
-           {paymentIsOpen && <YandexKassa token={dataPayment.token} email={dataPayment.email} orderId={dataPayment.orderId}/>}
+           {paymentIsOpen && <YandexKassa token={dataPayment.token} email={dataPayment.email} orderId={dataPayment.orderId} centToken={dataPayment.token}/>}
        </>
     )
 }
