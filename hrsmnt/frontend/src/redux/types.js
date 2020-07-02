@@ -40,3 +40,4 @@ export const PAYMENT_START          = 'payment/start';
 export const PAYMENT_START_LOADING  = 'payment/start_loading';
 export const PAYMENT_STOP           = 'payment/stop';
 export const PAYMENT_STOP_LOADING   = 'payment/stop_loading';
+export const PAYMENT_STATUS         = 'payment/status';

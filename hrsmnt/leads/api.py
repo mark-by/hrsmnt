@@ -197,11 +197,13 @@ def pay(request):
 
     # DELIVERY AND TOTAL PRICE
     sng = ['Азербайджан', 'Армения', 'Белоруссия', 'Казахстан', 'Киргизия', 'Молдавия', 'Таджикистан', 'Узбекистан']
+    delivery_price = 0
     if request.data['city'] != 'Москва':
         if request.data['country'] == 'Россия':
-            price += 350
+            delivery_price = 350
         elif request.data['country'] in sng:
-            price += 650
+            delivery_price = 650
+    price += delivery_price
 
     for item in order_items:
         price += item.item.price
@@ -209,19 +211,20 @@ def pay(request):
     order.save()
     pay_way = "Наличными" if order.pay_way == 'cash' else "Безналичными"
 
-    subject = f'[HRSMNT] Заказ №{order.id}'
-    html_message = render_to_string('emails/order.html',
-                                    {'items': order_items, 'delivery_type': delivery_type, 'order': order,
-                                     'metro': metro, 'post': post, 'pay_way': pay_way})
-    plain_message = strip_tags(html_message)
-    from_email = 'hrsmnt@hrsmnt.ru'
+    ya_token = ''
+    if order.pay_way == 'card':
+        ya_token = ya_pay(price, order.id, order.email, order_items, delivery_price)
+
+    send_template_email(subject=f'[HRSMNT] Заказ №{order.id}',
+                        template='emails/order.html',
+                        context={'items': order_items, 'delivery_type': delivery_type, 'order': order,
+                                 'metro': metro, 'post': post, 'pay_way': pay_way, 'ya_token': ya_token},
+                        to=[order.email])
+
     if order.pay_way == 'cash':
-        send_mail(subject, plain_message, from_email, [order.email], html_message=html_message)
-        # + ['hrsmnt@hrsmnt.ru']
         return Response({"order_id": order.id}, status.HTTP_200_OK)
-    token = ya_pay(price, order.id)
     return Response({"order_id": order.id,
-                     "token": token,
+                     "token": ya_token,
                      "cent_token": jwt.encode({"sub": f"{order.id}"}, settings.CENTRIFUGO_SECRET).decode()
                      }, status=status.HTTP_200_OK)
 
@@ -231,8 +234,28 @@ def pay_notify(request):
     data = json.loads(request.body)
     cl = Client(settings.CENTRIFUGO_HOST, api_key=settings.CENTRIFUGO_API_KEY,
                 timeout=1)
-    cl.publish(f'payment{int(data["object"]["description"].split("№")[1])}',
-               {'status': data['object']['status']})
+    status = data['event']
+    order_id = int(data["object"]["description"].split("№")[1])
+    order = Order.objects.get(pk=order_id)
+    if status == 'payment.succeeded':
+        order.pay_notified = True
+        order.paid = True
+        send_template_email(subject=f'[HRSMNT] Заказ №{order_id}',
+                            template='email/paid.html',
+                            context={'order_id': order_id},
+                            to=[order.email])
+    elif status == 'payment.canceled':
+        order.pay_notified = True
+        order.paid = False
+    order.save()
+    cl.publish(f'payment{order_id}',
+               {'status': status})
     response = HttpResponse()
     response.status_code = 200
     return response
+
+
+@api_view(['GET'])
+def check_payment(request):
+    order = Order.objects.get(pk=request.GET['id'])
+    return Response({"notified": order.pay_notified, "status": order.paid})

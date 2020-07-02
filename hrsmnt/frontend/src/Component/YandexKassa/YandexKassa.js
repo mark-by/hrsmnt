@@ -1,5 +1,4 @@
 import React, {useRef} from 'react';
-import Helmet from "react-helmet";
 import {useDispatch, useSelector} from "react-redux";
 import {paymentStopLoading} from "../../redux/actions";
 import './YandexKassa.css';
@@ -31,7 +30,7 @@ export default function YandexKassa({token, orderId, email, centToken}) {
 
     return (
         <main id="ya-kassa">
-            {loading && <p>Загрузка кассы...</p>}
+            {loading && <p style={{color: "white"}}>Загрузка кассы...</p>}
         </main>
     )
 }

@@ -36,6 +36,7 @@ urlpatterns = router.get_urls() + [
     path('api/create_pay', pay),
 
     path('pay_notify', pay_notify),
+    path('api/check-payment', check_payment),
 
     path('api/ok', ok, name='account_email_verification_sent'),
 ] + static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)

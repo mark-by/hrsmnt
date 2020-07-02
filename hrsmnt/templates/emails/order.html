@@ -10,6 +10,10 @@
 <p>Cпособ доставки: {{ delivery_type }}</p>
 <p>Ваш телефон: {{ order.tel }}</p>
 <p>Способ оплаты: {{ pay_way }}</p>
+{% if order.pay_way == 'card' %}
+    <p>Заказ ожидает оплаты</p>
+    <p>Если процесс оплаты прошел неуспешно, можете оплатить <a href="https://hrsmnt.ru/#/pay-order/{{ ya_token }}" style="color: blueviolet">здесь</a> в течении часа</p>
+{% endif %}
 {% if delivery_type != metro %}
     <p>Адрес: {{ order.address }}</p>
 {% endif %}

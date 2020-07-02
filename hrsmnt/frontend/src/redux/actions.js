@@ -13,7 +13,7 @@ import {
     FETCH_ITEMS, FETCH_SUGGESTIONS,
     FETCH_USER_DATA,
     HIDE_MESSAGE,
-    ITEM_TOGGLE_FAVORITE, PAYMENT_START, PAYMENT_START_LOADING, PAYMENT_STOP, PAYMENT_STOP_LOADING,
+    ITEM_TOGGLE_FAVORITE, PAYMENT_START, PAYMENT_START_LOADING, PAYMENT_STATUS, PAYMENT_STOP, PAYMENT_STOP_LOADING,
     RESTORE_BAG,
     SAVE_ADDRESS,
     SET_ADDRESSES,
@@ -24,7 +24,7 @@ import {
 } from "./types";
 import axios from 'axios';
 import {
-    apiAddFavorite,
+    apiAddFavorite, apiCheckPayment,
     apiGetAddresses,
     apiGetFavorites,
     apiGetItem,
@@ -219,4 +219,16 @@ export const paymentStop = () => {
         dispatch({type: PAYMENT_STOP})
     }
 }
+
 export const paymentStopLoading = () => ({type: PAYMENT_STOP_LOADING});
+
+export const paymentCheckStatus = (orderId) => {
+    return async dispatch => {
+        dispatch(enableLoading());
+        const response = await axios.get(apiCheckPayment, {params: {id: orderId}})
+        if (response.data.notified) {
+            dispatch({type: PAYMENT_STATUS, payload: response.data.status})
+            dispatch(disableLoading());
+        }
+    }
+}

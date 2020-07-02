@@ -1,2 +1,4 @@
 export const host = 'https://test.hrsmnt.ru'
-export const centrifugoHost = 'wss://test.hrsmnt.ru:8000'
+// export const host = "http://localhost"
+export const centrifugoHost = 'wss://ws.hrsmnt.ru'
+// export const centrifugoHost = 'ws://localhost:8756/connection/websocket'

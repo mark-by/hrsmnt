@@ -57,7 +57,7 @@ export default function Order({bagCost}) {
             delivery_type: delivery.type,
             email: postData.email,
             tel: postData.tel,
-            pay_way: payWay.type,
+            pay_way: delivery.type === 'post' ? "card" : payWay.type,
 
             first_name: postData.first_name,
             second_name: postData.second_name,
@@ -72,7 +72,7 @@ export default function Order({bagCost}) {
                     if (payWay.type === 'cash') {
                         history.push('/message/thanks-for-order/' + postData.email + '/' + response.data.order_id)
                     }
-                    if (payWay.type === 'card') {
+                    if (payWay.type === 'card' || delivery.type === 'post') {
                         dispatch(paymentStart(response.data.token, response.data.order_id, postData.email, response.data.cent_token));
                     }
                 }

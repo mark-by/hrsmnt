@@ -102,7 +102,7 @@ class Counter(models.Model):
 
     @property
     def is_available(self):
-        return self.amount > 0
+        return self.amount - self.reserved > 0
 
     def __str__(self):
         return self.title
@@ -202,6 +202,7 @@ class Order(models.Model):
                                      choices=(('p', 'Почтой'), ('m', 'У метро Кивеская'), ('c', 'Куерьер')),
                                      verbose_name='Способ доставки')
     tel = models.CharField(max_length=15, verbose_name='Телефон')
+    paid = models.BooleanField(default=False, verbose_name='Оплачен')
     email = models.EmailField()
     user = models.ForeignKey(User, related_name='orders', on_delete=models.DO_NOTHING, blank=True, null=True,
                              default=None, verbose_name='Аккаунт покупателя')
@@ -213,7 +214,7 @@ class Order(models.Model):
                                            Созвонились - мы созвонились и договорились о встрече, если того требует способ доставки;
                                            Завершен - Товар отдали, деньги получили, все довольны;
                                            ''')
-
+    pay_notified = models.BooleanField(default=False, verbose_name='Пришло ли уведомление об оплате')
     first_name = models.CharField(max_length=32, blank=True, null=True, verbose_name='Имя')
     second_name = models.CharField(max_length=32, blank=True, null=True, verbose_name='Фамилия')
     patronymic = models.CharField(max_length=32, blank=True, null=True, verbose_name='Отчество')
