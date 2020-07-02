@@ -236,20 +236,19 @@ def pay_notify(request):
                 timeout=1)
     status = data['event']
     order_id = int(data["object"]["description"].split("№")[1])
+    cl.publish(f'payment{order_id}', status)
     order = Order.objects.get(pk=order_id)
     if status == 'payment.succeeded':
         order.pay_notified = True
         order.paid = True
         send_template_email(subject=f'[HRSMNT] Заказ №{order_id}',
-                            template='email/paid.html',
+                            template='emails/paid.html',
                             context={'order_id': order_id},
                             to=[order.email])
     elif status == 'payment.canceled':
         order.pay_notified = True
         order.paid = False
     order.save()
-    cl.publish(f'payment{order_id}',
-               {'status': status})
     response = HttpResponse()
     response.status_code = 200
     return response

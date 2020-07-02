@@ -202,7 +202,7 @@ class Order(models.Model):
                                      choices=(('p', 'Почтой'), ('m', 'У метро Кивеская'), ('c', 'Куерьер')),
                                      verbose_name='Способ доставки')
     tel = models.CharField(max_length=15, verbose_name='Телефон')
-    paid = models.BooleanField(default=False, verbose_name='Оплачен')
+    paid = models.BooleanField(default=False, null=True, verbose_name='Оплачен')
     email = models.EmailField()
     user = models.ForeignKey(User, related_name='orders', on_delete=models.DO_NOTHING, blank=True, null=True,
                              default=None, verbose_name='Аккаунт покупателя')
