@@ -1,4 +1,4 @@
-import {ADD_ITEM_TO_BAG, CLEAR_BAG, DELETE_ITEM_FROM_BAG, RESTORE_BAG} from "../types";
+import {ADD_ITEM_TO_BAG, CLEAR_BAG, DELETE_BAG_ITEMS, DELETE_ITEM_FROM_BAG, RESTORE_BAG} from "../types";
 const initialState = {list: [], restored: false}
 
 export const bagReducer = (state = initialState, action) => {
@@ -17,6 +17,10 @@ export const bagReducer = (state = initialState, action) => {
         case CLEAR_BAG:
             localStorage.removeItem('bag');
             return {list: [], restored: true};
+        case DELETE_BAG_ITEMS:
+            newList = state.list.filter(item => action.payload.findIndex(el => el.id === item.id && el.size === item.size) === -1)
+            localStorage.setItem('bag', JSON.stringify(newList))
+            return {list: newList}
         default: return state;
     }
 }

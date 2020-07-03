@@ -1,4 +1,5 @@
 from django.db import models
+from .ya_kassa import take_refund
 
 from django.contrib.auth.models import AbstractBaseUser, BaseUserManager
 from datetime import datetime
@@ -98,6 +99,7 @@ class Counter(models.Model):
     title = models.CharField(max_length=32)
     amount = models.PositiveIntegerField(default=0)
     reserved = models.PositiveIntegerField(default=0)
+    priority = models.PositiveSmallIntegerField(default=0)
     item = models.ForeignKey('Item', related_name='counters', on_delete=models.CASCADE)
 
     @property
@@ -110,6 +112,7 @@ class Counter(models.Model):
     class Meta:
         verbose_name = 'Размер'
         verbose_name_plural = 'Размеры'
+        ordering = ['priority']
 
 
 class Item(models.Model):
@@ -126,7 +129,7 @@ class Item(models.Model):
     views_count = models.PositiveIntegerField(default=0)
 
     def __str__(self):
-        return f'{self.title} ({self.price} р)'
+        return f'{self.title}'
 
     class Meta:
         ordering = ['-create_at']
@@ -158,17 +161,6 @@ class ItemGridValue(models.Model):
         ordering = ['priority']
 
 
-class Address(models.Model):
-    title = models.CharField(max_length=32)
-    value = models.TextField()
-    postal_code = models.IntegerField()
-    apartment = models.SmallIntegerField(blank=True, null=True)
-    owner = models.ForeignKey(User, related_name='addresses', on_delete=models.CASCADE)
-
-    class Meta:
-        ordering = ['title']
-
-
 class Favorite(models.Model):
     item = models.ForeignKey(Item, related_name='followers', on_delete=models.CASCADE)
     user = models.ForeignKey(User, related_name='favorites', on_delete=models.CASCADE)
@@ -181,6 +173,7 @@ class Favorite(models.Model):
 
 class OrderItem(models.Model):
     item = models.ForeignKey(Item, on_delete=models.CASCADE, verbose_name='Вещь')
+    price = models.PositiveIntegerField(default=0)
     size = models.ForeignKey(Counter, on_delete=models.CASCADE, verbose_name='Размер')
     order = models.ForeignKey('Order', related_name='items', on_delete=models.CASCADE)
 
@@ -188,6 +181,7 @@ class OrderItem(models.Model):
         return f'{self.item} | {self.size}'
 
     def save(self, *args, **kwargs):
+        self.price = self.item.price
         super().save(*args, **kwargs)
         self.size.reserved += 1
         self.size.save()
@@ -206,9 +200,11 @@ class Order(models.Model):
     email = models.EmailField()
     user = models.ForeignKey(User, related_name='orders', on_delete=models.DO_NOTHING, blank=True, null=True,
                              default=None, verbose_name='Аккаунт покупателя')
-    status = models.CharField(max_length=1,
-                              choices=(('r', 'Оформлен'), ('p', 'Оплачен'), ('s', 'Созвонились'), ('c', 'Завершен'), ('o', 'Отменен')),
-                              default='r', verbose_name='Статус заказа',
+    status = models.CharField(max_length=20,
+                              choices=(('reserved', 'Оформлен'), ('paid', 'Оплачен'), ('on_delivery', 'В пути'),
+                                       ('called', 'Созвонились'), ('completed', 'Завершен'), ('canceled', 'Отменен'),
+                                       ('returned', 'Возвращен')),
+                              default='reserved', verbose_name='Статус заказа',
                               help_text='''Оформлен - человек оформил заказ (требует оплаты налом);
                                            Оплачен - человек уже оплатил безналом;
                                            Созвонились - мы созвонились и договорились о встрече, если того требует способ доставки;
@@ -226,34 +222,45 @@ class Order(models.Model):
     description = models.TextField(blank=True, null=True, verbose_name='Комментарий',
                                    help_text='Можно написать здесь результат созвона')
     total_price = models.IntegerField(default=0, verbose_name='Итоговая стоимость заказа')
+    payment_id = models.TextField(blank=True, null=True)
 
     def __str__(self):
         status = ''
-        if self.status == 'r':
+        if self.status == 'reserved':
             status = 'Оформлен'
-        elif self.status == 'p':
+        elif self.status == 'paid':
             status = 'Оплачен'
-        elif self.status == 's':
+        elif self.status == 'called':
             status = 'Созвонились'
-        elif self.status == 'c':
+        elif self.status == 'completed':
             status = 'Завершен'
-        elif self.status == 'o':
+        elif self.status == 'canceled':
             status = 'Отменен'
+        elif self.status == 'returned':
+            status = 'Возвращен'
+        elif self.status == 'on_delivery':
+            status = 'В пути'
 
         return f'Заказ №{self.id} | {status}'
 
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         items = self.items.all()
-        if self.status == 'p' or self.status == 'c':
+        if self.status == 'completed':
             for item in items:
                 item.size.amount -= 1
                 item.size.reserved -= 1
                 item.size.save()
-        elif self.status == 'o':
+        elif self.status == 'canceled':
             for item in items:
                 item.size.reserved -= 1
                 item.size.save()
+        elif self.status == 'returned':
+            if self.paid and self.pay_notified:
+                item_price = 0
+                for item in self.items.all():
+                    item_price += item.price
+                take_refund(self.payment_id, item_price)
 
     class Meta:
         ordering = ['-create_at']

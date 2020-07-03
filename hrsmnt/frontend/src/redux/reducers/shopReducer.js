@@ -1,4 +1,4 @@
-import {FETCH_ITEM, FETCH_ITEMS, FETCH_SUGGESTIONS, ITEM_TOGGLE_FAVORITE} from "../types";
+import {FETCH_ITEM, FETCH_ITEMS, ITEM_TOGGLE_FAVORITE} from "../types";
 
 const initialState = {
     list: [],

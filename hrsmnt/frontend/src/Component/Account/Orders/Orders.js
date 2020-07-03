@@ -1,27 +1,38 @@
 import React from "react";
 import './Orders.css'
 import ItemHistory from "../ItemHistory/ItemHistory";
+import {useDispatch, useSelector} from "react-redux";
+import {fetchOrderHistory} from "../../../redux/actions";
 
-export default function Orders(props) {
-    const orders = [
-        {
-            date: "22.06.20", items: [
-                {id: 1, image: "green", title: "SPRAY", price: 6000, size: "M"},
-                {id: 2, image: "black", title: "Vova", price: 2500, size: "S"},
-                {id: 3, image: "gray", title: "Hate", price: 2200, size: "L"},
-            ]
-        },
-        {
-            date: "23.06.20", items: [
-                {id: 1, image: "green", title: "SPRAY", price: 6000, size: "M"},
-                {id: 2, image: "black", title: "Vova", price: 2500, size: "S"},
-            ]
-        },
-    ]
+export default function Orders() {
+    const orders = useSelector(state => state.user.orders);
+    const dispatch = useDispatch();
+
+    React.useEffect(() => {
+        dispatch(fetchOrderHistory())
+    }, [])
 
     const templateColumns = "repeat(4, 1fr)";
     const columnsGap = "10px";
 
+    function strStatus(status) {
+        switch (status) {
+            case 'reserved':
+                return "Оформлен";
+            case 'canceled':
+                return "Отменен";
+            case 'called':
+                return "Созвонились";
+            case 'completed':
+                return "Завершен";
+            case 'returned':
+                return "Возвращен";
+            case 'on_delivery':
+                return 'В пути';
+            case 'paid':
+                return 'Оплачен';
+        }
+    }
 
     if (orders.length === 0) {
         return <div className="account-window orders">
@@ -32,8 +43,8 @@ export default function Orders(props) {
             <div className="account-window orders">
                 {
                     orders.map((order, idx) => {
-                            let total = 0;
-                            return <div className="history-order">
+                            const datas = order.create_at.slice(0, 10).split('-');
+                            return <div className="history-order" key={idx}>
                                 <div className="bag-window-title" style={{
                                     gridTemplateColumns: templateColumns,
                                     gridColumnGap: columnsGap
@@ -45,22 +56,26 @@ export default function Orders(props) {
                                 </div>
                                 <div className={"bag-list"}>
                                     {order.items.map((item, idx) => {
-                                        total += item.price;
                                         return <ItemHistory
                                             templateColumns={templateColumns}
                                             columnGap={columnsGap}
-                                            id={item.id}
-                                            image={item.image}
-                                            title={item.title}
+                                            id={item.item.id}
+                                            image={item.item.front_image}
+                                            title={item.item.title}
                                             size={item.size}
                                             price={item.price}
                                             key={idx}/>
                                     })}
                                 </div>
-                                <div className="bottom-wrapper">
-                                    <div>Всего: {total} р</div>
-                                    <div>Дата: {order.date}</div>
+                                <div className="bottom-wrapper" style={{paddingBottom: "5px"}}>
+                                    <div>Номер заказа: {order.id}</div>
+                                    <div>Статус: {strStatus(order.status)}</div>
                                 </div>
+                                <div className="bottom-wrapper">
+                                    <div>Всего: {order.total_price} р *</div>
+                                    <div>Дата: {`${datas[2]}.${datas[1]}.${datas[0].slice(2)}`}</div>
+                                </div>
+                                <p style={{color: "gray", fontSize: "12px", paddingTop: "5px"}}>* - с учетом доставки</p>
                             </div>
                         }
                     )

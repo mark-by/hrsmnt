@@ -28,7 +28,6 @@ export default function Item(props) {
         item = items[index]
     }
     if (!loading && (index === -1 || !item.verbose_fetched)) {
-        console.log("FETCH", item)
         dispatch(fetchItem(props.match.params.id, setError));
     }
     const isFavorite = !!item.is_favorite;
@@ -61,13 +60,6 @@ export default function Item(props) {
         )
     }
 
-    let selectOptions = []
-    item.counters.forEach(size => {
-        if (size.is_available) {
-            selectOptions.push({title: size.title, value: size.title})
-        }
-    })
-
     function addFavoriteHandler(item) {
         if (!isLogged()) {
             dispatch(showMessage({
@@ -79,6 +71,13 @@ export default function Item(props) {
             dispatch(addFavorite(item))
         }
     }
+
+    let selectOptions = []
+    item.counters.forEach(size => {
+        if (size.is_available) {
+            selectOptions.push({title: size.title, value: size.title})
+        }
+    })
 
     return (
         <main className="container item">
@@ -95,7 +94,7 @@ export default function Item(props) {
                             </div>
                         </div>
                         <div className="item-control-part">
-                            <Select options={selectOptions}
+                            {selectOptions.length > 0 && <Select options={selectOptions}
                                     title="Выберите размер"
                                     secondTitle="Выбран размер"
                                     name="size"
@@ -103,9 +102,12 @@ export default function Item(props) {
                                         background: "#ababab",
                                         width: "250px"
                                     }}
-                                    selectHandler={selectSize}/>
+                                    selectHandler={selectSize}/>}
                             <div className="row item-main-wrapper">
-                                <div className="button black" onClick={() => addToBag(item)}>Добавить в корзину </div>
+                                {selectOptions.length > 0 ?
+                                    <div className="button black" onClick={() => addToBag(item)}>Добавить в корзину</div> :
+                                    <div className="button" style={{background: "gray", color: "white"}}>Распродано</div>
+                                }
                                 <img src={isFavorite && isLogged() ? fillStar : star} className="img-button" alt="добавить в избранное" onClick={() => addFavoriteHandler(item)}/>
                             </div>
                             {item.parameters && item.parameters.length > 0 ? <div className="button" style={{

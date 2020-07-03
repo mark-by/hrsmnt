@@ -2,16 +2,18 @@ import React from "react";
 import './ItemHistory.css'
 import close from '../../../images/close.svg'
 
-function resize(image, width) {
-    return `/resize-img/w${width}${image}`;
-}
-
-function srcSet(image) {
-    return `${resize(image, 100)}, ${resize(image, 150)} 1.5x, ${resize(image, 200)} 2x`;
-}
-
 
 export default function ItemHistory(props) {
+
+    function resize(image, width) {
+        return `/resize-img/w${width}${image}`;
+    }
+
+    function srcSet(image) {
+        return `${resize(image, 100)}, ${resize(image, 150)} 1.5x, ${resize(image, 200)} 2x`;
+    }
+
+
     return (
         <div className="item-history" style={{
             gridTemplateColumns: props.templateColumns,

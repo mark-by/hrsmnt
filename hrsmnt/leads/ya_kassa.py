@@ -1,4 +1,4 @@
-from yandex_checkout import Configuration, Payment
+from yandex_checkout import Configuration, Payment, Refund
 from django.conf import settings
 import uuid
 
@@ -8,7 +8,8 @@ def pay(value, order_id, email, items, delivery):
     Configuration.secret_key = settings.YA_SECRET_KEY
 
     payment_items = [
-        {"description": f'{item.item.title} [{item.size.title}]', "quantity": "1", "amount": {"value": item.item.price, "currency": "RUB"},
+        {"description": f'{item.item.title} [{item.size.title}]', "quantity": "1",
+         "amount": {"value": item.item.price, "currency": "RUB"},
          "vat_code": 1} for item in items]
     if delivery:
         payment_items += [{"description": "Доставка", "quantity": "1", "amount": {"value": delivery, "currency": "RUB"},
@@ -33,4 +34,17 @@ def pay(value, order_id, email, items, delivery):
         "description": f"Заказ №{order_id}"
     }, uuid.uuid4())
 
-    return payment.confirmation.confirmation_token
+    return payment.confirmation.confirmation_token, payment.id
+
+
+def take_refund(payment_id, amount):
+    Configuration.account_id = settings.YA_ACCOUNT_ID
+    Configuration.secret_key = settings.YA_SECRET_KEY
+
+    Refund.create({
+        "amount": {
+            "value": amount,
+            "currency": "RUB",
+        },
+        "payment_id": payment_id
+    })

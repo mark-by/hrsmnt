@@ -47,10 +47,10 @@ class TypeAdmin(admin.ModelAdmin):
 
 class ItemOrderInline(admin.TabularInline):
     model = OrderItem
-    readonly_fields = ('item', 'size')
+    readonly_fields = ('item', 'size', 'price')
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
     readonly_fields = ('user', 'delivery_type', 'tel', 'email', 'first_name', 'second_name',
-                       'patronymic', 'address', 'postal_code', 'pay_way')
+                       'patronymic', 'address', 'postal_code', 'pay_way', 'pay_notified', 'payment_id', 'total_price')
     inlines = [ItemOrderInline]

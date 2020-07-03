@@ -1,5 +1,6 @@
 import React from 'react';
 import {AddressSuggestions} from "react-dadata";
+import './react-dadata.css'
 
 export function Address({filterLocations, inputProps, value, setValue, onChange, hint, gridTemplate}) {
     const onChangeAddressHandler = e => {

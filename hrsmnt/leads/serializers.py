@@ -25,12 +25,6 @@ class ChangeUserDataSerializer(serializers.ModelSerializer):
         fields = ('username', 'name', 'gender')
 
 
-class AddressSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Address
-        fields = ('id', 'title', 'value', 'postal_code', 'apartment', 'owner')
-
-
 class CounterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Counter
@@ -77,3 +71,26 @@ class VerboseItemSerializer(serializers.ModelSerializer):
         model = Item
         fields = ('id', 'title', 'price', 'back_image', 'front_image',
                   'counters', 'images', 'description', 'type', 'parameters')
+
+
+class VerySimpleItemSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Item
+        fields = ('front_image', 'price', 'title', 'id')
+
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    item = VerySimpleItemSerializer()
+    size = serializers.StringRelatedField()
+
+    class Meta:
+        model = OrderItem
+        fields = ('item', 'size', 'price')
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    items = OrderItemSerializer(many=True)
+
+    class Meta:
+        model = Order
+        fields = ('id', 'items', 'total_price', 'create_at', 'status')

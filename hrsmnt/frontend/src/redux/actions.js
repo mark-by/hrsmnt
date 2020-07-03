@@ -3,14 +3,14 @@ import {
     ADD_FAVORITE,
     ADD_ITEM_TO_BAG, BLUR_APP,
     CHECK_EMAIL_TOKEN, CLEAR_BAG,
-    DELETE_ADDRESS,
+    DELETE_ADDRESS, DELETE_BAG_ITEMS,
     DELETE_FAVORITE,
     DELETE_ITEM_FROM_BAG,
     DELETE_USER_DATA, DISABLE_SUGGESTIONS_LOADING, ENABLE_SUGGESTIONS_LOADING,
     END_LOADING,
     FETCH_FAVORITES,
     FETCH_ITEM,
-    FETCH_ITEMS, FETCH_SUGGESTIONS,
+    FETCH_ITEMS, FETCH_ORDER_HISTORY, FETCH_SUGGESTIONS,
     FETCH_USER_DATA,
     HIDE_MESSAGE,
     ITEM_TOGGLE_FAVORITE, PAYMENT_START, PAYMENT_START_LOADING, PAYMENT_STATUS, PAYMENT_STOP, PAYMENT_STOP_LOADING,
@@ -28,7 +28,7 @@ import {
     apiGetAddresses,
     apiGetFavorites,
     apiGetItem,
-    apiGetItems, apiSuggestions,
+    apiGetItems, apiGetOrderHistory, apiPayOrder, apiSuggestions,
     apiUserData,
     apiVerifyEmail
 } from "../backend/api";
@@ -48,7 +48,7 @@ export const restoreBag = () => {
         }
     }
 }
-
+export const deleteBagItems = (items) => ({type: DELETE_BAG_ITEMS, payload: items});
 
 export const clearBag = () => ({type: CLEAR_BAG})
 
@@ -78,34 +78,6 @@ export const checkEmailToken = (token) => {
         dispatch(disableLoading())
     }
 }
-
-export const fetchAddresses = () => {
-    return async dispatch => {
-        dispatch(enableLoading());
-        try {
-            const response = await axios.get(apiGetAddresses)
-            if (response.status === 200) {
-                dispatch({type: SET_ADDRESSES, payload: response.data})
-            }
-        } catch (e) {
-
-        }
-        dispatch(disableLoading())
-    }
-}
-
-export const addAddress = () => ({type: ADD_ADDRESS})
-export const updateAddress = (address) => ({type: UPDATE_ADDRESS, payload: address})
-export const deleteAddress = (address) => ({type: DELETE_ADDRESS, payload: address})
-export const resetAddresses = (addresses) => {
-    return async dispatch => {
-        console.log(addresses)
-        dispatch({type: SET_ADDRESSES, payload: []})
-        dispatch({type: SET_ADDRESSES, payload: addresses})
-    }
-}
-export const saveAddress = (address, id) => ({type: SAVE_ADDRESS, payload: {...address, new: false, id: id}})
-
 
 //APP
 export const enableLoading = () => ({type: START_LOADING})
@@ -156,7 +128,7 @@ export const toggleFavoriteItem = (item, value) => ({type: ITEM_TOGGLE_FAVORITE,
 
 //Favorites
 
-export const fetchFavorites = (setFetched) => {
+export const fetchFavorites = () => {
     return async dispatch => {
         dispatch(enableLoading())
         try {
@@ -168,7 +140,6 @@ export const fetchFavorites = (setFetched) => {
             dispatch(showMessage({value: "Что-то не так", type: msgTypeFail}));
             dispatch({type: FETCH_FAVORITES, payload: []})
         }
-        setFetched(true);
         dispatch(disableLoading());
     }
 }
@@ -221,14 +192,38 @@ export const paymentStop = () => {
 }
 
 export const paymentStopLoading = () => ({type: PAYMENT_STOP_LOADING});
-
+export const paymentStatus = (status) => ({type: PAYMENT_STATUS, payload: status});
 export const paymentCheckStatus = (orderId) => {
     return async dispatch => {
         dispatch(enableLoading());
         const response = await axios.get(apiCheckPayment, {params: {id: orderId}})
         if (response.data.notified) {
-            dispatch({type: PAYMENT_STATUS, payload: response.data.status})
+            paymentStatus(response.data.status);
             dispatch(disableLoading());
         }
+    }
+}
+
+export const payOrder = (orderId, setMsg) => {
+    return async dispatch => {
+        dispatch(enableLoading());
+        try {
+            const response = await axios.get(apiPayOrder, {params: {id: orderId}});
+            if (response.status === 200) {
+                dispatch(paymentStart(response.data.token, orderId, response.data.email, response.data.cent_token))
+            }
+        } catch (e) {
+            setMsg(e.response.data.error)
+        }
+        dispatch(disableLoading());
+    }
+}
+
+export const fetchOrderHistory = () => {
+    return async dispatch => {
+        dispatch(enableLoading());
+        const response = await axios.get(apiGetOrderHistory);
+        dispatch({type: FETCH_ORDER_HISTORY, payload: response.data});
+        dispatch(disableLoading());
     }
 }

@@ -5,14 +5,15 @@ import {useDispatch, useSelector} from "react-redux";
 import {fetchItems} from "../../redux/actions";
 
 export default function Shop() {
-    const itemsIsFetched = useSelector(state => state.shop.isFetched);
     const items = useSelector(state => state.shop.list);
+    const isFetched = useSelector(state => state.shop.isFetched);
     const loading = useSelector(state => state.app.loading);
     const dispatch = useDispatch();
 
-    if (!itemsIsFetched && !loading) {
-        dispatch(fetchItems())
-    }
+    React.useEffect(() => {
+        if (!isFetched)
+            dispatch(fetchItems())
+    }, [])
 
    return (
            <main className="container shop">

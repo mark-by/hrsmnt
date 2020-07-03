@@ -1,7 +1,8 @@
 export const ADD_ITEM_TO_BAG        = 'BAG/ADD_ITEM_TO_BAG';
 export const DELETE_ITEM_FROM_BAG   = 'BAG/DELETE_ITEM_FROM_BAG';
 export const RESTORE_BAG            = 'bag/restore';
-export const CLEAR_BAG            = 'bag/clear';
+export const CLEAR_BAG              = 'bag/clear';
+export const DELETE_BAG_ITEMS       = 'bag/delete-items';
 
 export const FETCH_USER_DATA        = 'USER/FETCH_USER_DATA';
 export const SET_USER_DATA          = 'USER/SET_USER_DATA';
@@ -41,3 +42,5 @@ export const PAYMENT_START_LOADING  = 'payment/start_loading';
 export const PAYMENT_STOP           = 'payment/stop';
 export const PAYMENT_STOP_LOADING   = 'payment/stop_loading';
 export const PAYMENT_STATUS         = 'payment/status';
+
+export const FETCH_ORDER_HISTORY    = 'orders/fetch';

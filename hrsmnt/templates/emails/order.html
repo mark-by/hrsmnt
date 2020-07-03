@@ -7,17 +7,17 @@
 <body>
 <h2>Спасибо за заказ!</h2>
 <p>Номер заказа: {{ order.id }}</p>
-<p>Cпособ доставки: {{ delivery_type }}</p>
+<p>Cпособ доставки: {% if order.delivery_type == 'm' %}У станции метро Киевская{% elif order.delivery_type == 'c' %}Курьером{% elif order.delivery_type == 'p' %}Почтой России{% endif %}</p>
 <p>Ваш телефон: {{ order.tel }}</p>
-<p>Способ оплаты: {{ pay_way }}</p>
+<p>Способ оплаты: {% if order.pay_way == 'card' %}Безналичный расчет{% else %}Наличными{% endif %}</p>
 {% if order.pay_way == 'card' %}
     <p>Заказ ожидает оплаты</p>
-    <p>Если процесс оплаты прошел неуспешно, можете оплатить <a href="https://hrsmnt.ru/#/pay-order/{{ ya_token }}" style="color: blueviolet">здесь</a> в течении часа</p>
+    <p>Если процесс оплаты прошел неуспешно, можете оплатить <a href="https://hrsmnt.ru/#/pay-order/{{ order.id }}" style="color: blueviolet">здесь</a> в течении часа</p>
 {% endif %}
-{% if delivery_type != metro %}
+{% if order.delivery_type != 'm' %}
     <p>Адрес: {{ order.address }}</p>
 {% endif %}
-{% if delivery_type == post %}
+{% if order.delivery_type == 'p' %}
     <p>Почтовый индекс: {{ order.postal_code }}</p>
     <p>Имя: {{ order.first_name }}</p>
     <p>Фамилия: {{ order.second_name }}</p>

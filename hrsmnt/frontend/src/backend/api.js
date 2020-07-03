@@ -18,10 +18,12 @@ export const apiGetItems = '/api/get-items';
 export const apiGetItem = '/api/get-item';
 
 export const apiGetFavorites = '/api/get-favorites';
-export const apiDeleteFavorite = '/api/delete-favorite';
 export const apiAddFavorite = '/api/add-favorite';
 
 export const apiSuggestions = '/api/get-suggestions';
 
 export const apiCreatePayment = '/api/create_pay';
 export const apiCheckPayment = '/api/check-payment';
+export const apiPayOrder = '/api/pay-order';
+
+export const apiGetOrderHistory = '/api/order-history';

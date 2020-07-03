@@ -1,7 +1,6 @@
 import React from "react";
 import './ItemCard.css'
 import {Link} from "react-router-dom";
-import {loadImage} from '../../../utils';
 
 export default function ItemCard(props) {
     const [img, setImg] = React.useState(props.data.front_image)

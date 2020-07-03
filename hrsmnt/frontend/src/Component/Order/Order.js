@@ -6,16 +6,23 @@ import ChooseDelivery from "./ChooseDelivery";
 import ChoosePayWay from "./ChoosePayWay";
 import DeliveryInfo from "./DeliveryInfo";
 import {useDispatch, useSelector} from "react-redux";
-import {csrfAxios} from "../../utils";
+import {csrfAxios, isLogged} from "../../utils";
 import {apiCreatePayment} from "../../backend/api";
-import {paymentStart} from "../../redux/actions";
+import {deleteBagItems, fetchUserData, paymentStart, showMessage} from "../../redux/actions";
 import {useHistory} from 'react-router-dom';
+import {msgTypeFail} from "../Message/types";
 
 export default function Order({bagCost}) {
     const dispatch = useDispatch();
     const items = useSelector(state => state.bag.list)
     const payStarted = useSelector(state => state.payment.started);
     const history = useHistory();
+    const userData = useSelector(state => state.user.data);
+    React.useEffect(() => {
+        if (isLogged() && !userData.email) {
+            dispatch(fetchUserData());
+        }
+    }, [])
 
     const [delivery, setDelivery] = React.useState({
         selected: false,
@@ -37,7 +44,7 @@ export default function Order({bagCost}) {
 
     const [postData, setPostData] = React.useState({
         isOpen: true,
-        email: '',
+        email: userData.email,
         tel: '',
         first_name: '',
         second_name: '',
@@ -76,6 +83,10 @@ export default function Order({bagCost}) {
                         dispatch(paymentStart(response.data.token, response.data.order_id, postData.email, response.data.cent_token));
                     }
                 }
+            })
+            .catch(e => {
+                dispatch(showMessage({value: "Некоторые товары уже распроданы. Мы удалили их из корзины.", type: msgTypeFail}))
+                dispatch(deleteBagItems(e.response.data))
             })
     }
 

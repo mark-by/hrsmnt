@@ -21,11 +21,6 @@ urlpatterns = router.get_urls() + [
     path('api/reset-password', PasswordResetView.as_view()),
     path('api/confirm-password', PasswordResetConfirmView.as_view()),
 
-    path('api/save-address', save_address),
-    path('api/get-addresses', get_addresses),
-    path('api/update-address', update_address),
-    path('api/delete-address', delete_address),
-
     path('api/get-items', get_items),
     path('api/get-item', get_item),
 
@@ -33,10 +28,12 @@ urlpatterns = router.get_urls() + [
     path('api/add-favorite', add_favorite),
     path('api/get-suggestions', suggestion),
 
-    path('api/create_pay', pay),
+    path('api/create_pay', Pay.as_view()),
 
     path('pay_notify', pay_notify),
     path('api/check-payment', check_payment),
+    path('api/pay-order', pay_order),
+    path('api/order-history', get_orders),
 
     path('api/ok', ok, name='account_email_verification_sent'),
 ] + static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)

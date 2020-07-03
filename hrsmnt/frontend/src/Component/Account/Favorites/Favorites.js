@@ -7,14 +7,12 @@ import {fetchFavorites} from "../../../redux/actions";
 
 export default function Favorites() {
     const favorites = useSelector(state => state.favorites.list);
-    const isFetched = useSelector(state => state.favorites.isFetched);
-    const [stateFetched, toggleFetched] = React.useState(false);
-    const loading = useSelector(state => state.app.loading);
     const dispatch = useDispatch();
 
-    if (!loading && (!isFetched || !stateFetched)) {
-        dispatch(fetchFavorites(toggleFetched));
-    }
+    React.useEffect(() => {
+        dispatch(fetchFavorites());
+    },[])
+
 
     if (favorites.length === 0) {
         return <div className="account-window favorites">

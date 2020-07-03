@@ -1,6 +1,6 @@
 import {
     CHECK_EMAIL_TOKEN,
-    DELETE_USER_DATA,
+    DELETE_USER_DATA, FETCH_ORDER_HISTORY,
     FETCH_USER_DATA,
     SET_USER_DATA,
 } from "../types";
@@ -8,7 +8,8 @@ import {
 const initialState = {
     data: {},
     emailToken: {isValid: false, isSet: false},
-    addresses: []
+    addresses: [],
+    orders: [],
 }
 
 export const userReducer = (state = initialState, action) => {
@@ -21,6 +22,8 @@ export const userReducer = (state = initialState, action) => {
             return {...state, emailToken: {isValid: action.payload, isSet: true}};
         case DELETE_USER_DATA:
             return {...state, data: {}};
+        case FETCH_ORDER_HISTORY:
+            return {...state, orders: action.payload}
         default:
             return state;
     }

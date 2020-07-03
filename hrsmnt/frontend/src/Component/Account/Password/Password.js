@@ -9,14 +9,16 @@ import {csrfAxios} from "../../../utils";
 import {apiChangePassword} from "../../../backend/api";
 import {msgTypeFail, msgTypeSuccess} from "../../Message/types";
 
-export default function Password(props) {
+export default function Password() {
     const data = useSelector(state => state.user.data);
     const [inputData, setInputData] = React.useState({});
     const [errors, setErrors] = React.useState({});
     const dispatch = useDispatch();
 
-    if (!data.username)
-        dispatch(fetchUserData())
+    React.useEffect(() => {
+        if (!data.username)
+            dispatch(fetchUserData())
+    }, []);
 
     function submitHandler(event) {
         event.preventDefault();

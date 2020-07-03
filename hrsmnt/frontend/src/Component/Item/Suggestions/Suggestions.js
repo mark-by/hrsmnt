@@ -6,15 +6,12 @@ import {fetchSuggestion} from "../../../redux/actions";
 
 export default function Suggestions(props) {
     const items = useSelector(state => state.suggestions.list);
-    // const isFetched = useSelector(state => state.shop.suggestionsFetched);
-    let [isFetched, toggleFetched] = React.useState(false);
     const loading = useSelector(state => state.suggestions.loading);
     const dispatch = useDispatch();
 
-    if (!loading && !isFetched) {
-        dispatch(fetchSuggestion(props.item));
-        toggleFetched(true);
-    }
+    React.useEffect(() => {
+        dispatch(fetchSuggestion(props.item))
+    }, [props.item]);
 
     if (loading) {
         return (

@@ -1,8 +1,5 @@
 from rest_framework.decorators import api_view, parser_classes
 from django.http import HttpResponse
-from django.core.serializers import deserialize
-from django.template.loader import render_to_string
-from django.utils.html import strip_tags
 from .ya_kassa import pay as ya_pay
 from rest_framework.response import Response
 from django.core import exceptions
@@ -10,7 +7,7 @@ from rest_framework import status
 from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
 from django.db.models import Q
-from django.core.mail import send_mail, mail_admins
+from rest_framework.generics import CreateAPIView
 import jwt
 from django.conf import settings
 from django.views.decorators.csrf import csrf_exempt
@@ -39,47 +36,6 @@ def change_settings(request):
 
 def ok(request):
     return Response()
-
-
-@api_view(['POST'])
-@login_required
-def save_address(request):
-    request.data['owner'] = request.user.id
-    serializer = AddressSerializer(data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response({'id': serializer.instance.id}, status=status.HTTP_201_CREATED)
-    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['GET'])
-@login_required
-def get_addresses(request):
-    addresses = request.user.addresses.all()
-    serializer = AddressSerializer(addresses, many=True)
-    return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-@api_view(['POST'])
-@login_required
-def update_address(request):
-    request.data['owner'] = request.user.id
-    if request.data['apartment'] == '':
-        request.data['apartment'] = None
-    serializer = AddressSerializer(Address.objects.get(pk=request.data['id']), request.data)
-    if serializer.is_valid():
-        serializer.save()
-        return Response(status=status.HTTP_200_OK)
-    print(serializer.errors)
-    return Response(status=status.HTTP_400_BAD_REQUEST)
-
-
-@api_view(['POST'])
-@login_required
-def delete_address(request):
-    address = Address.objects.get(pk=request.data['id'])
-    address.delete()
-    return Response(status=status.HTTP_200_OK)
 
 
 @api_view(['GET'])
@@ -149,84 +105,89 @@ def suggestion(request):
     return Response(serializer.data, status=status.HTTP_200_OK)
 
 
-@api_view(['POST'])
-def pay(request):
-    items = request.data['items']
-    error_items = []
-    good_items = []
-    for item in items:
-        size = Counter.objects.get(Q(item_id=item['id']) & Q(title=item['size']))
-        if size.amount - size.reserved > 0:
-            good_items.append({"id": item['id'], "size": size})
-        else:
-            error_items.append(item['id'])
-    if error_items:
-        return Response(error_items, status.HTTP_400_BAD_REQUEST)
-    order = Order()
-    if not request.user.is_anonymous:
-        order.user = request.user
+class Pay(CreateAPIView):
+    order = None
+    order_items = []
 
-    order.email = request.data['email']
-    order.tel = request.data['tel']
+    def filter_items(self):
+        items = self.request.data['items']
+        error_items = []
+        good_items = []
+        for item in items:
+            size = Counter.objects.get(Q(item_id=item['id']) & Q(title=item['size']))
+            if size.amount - size.reserved > 0:
+                good_items.append({"id": item['id'], "size": size})
+            else:
+                error_items.append({"id": item['id'], "size": size.title})
+        return error_items, good_items
 
-    metro = 'У метро Киевская'
-    courier = 'Курьером'
-    post = 'Почтой России'
-    delivery_type = post
-    if request.data['delivery_type'] == 'post':
-        order.delivery_type = 'p'
-        order.first_name = request.data['first_name']
-        order.second_name = request.data['second_name']
-        order.patronymic = request.data['patronymic']
-        order.postal_code = request.data['postal_code']
-        order.address = request.data['address']
-    if request.data['delivery_type'] == 'courier':
-        delivery_type = courier
-        order.delivery_type = 'c'
-        order.address = request.data['address']
-    if request.data['delivery_type'] == 'metro':
-        delivery_type = metro
-        order.delivery_type = 'm'
-    order.pay_way = request.data['pay_way']
-    order.save()
+    def set_order_data(self):
+        if not self.request.user.is_anonymous:
+            self.order.user = self.request.user
 
-    order_items = [OrderItem(item_id=item['id'], size=item['size'], order=order) for item in good_items]
-    for item in order_items:
-        item.save()
-    price = 0
+        self.order.email = self.request.data['email']
+        self.order.tel = self.request.data['tel']
 
-    # DELIVERY AND TOTAL PRICE
-    sng = ['Азербайджан', 'Армения', 'Белоруссия', 'Казахстан', 'Киргизия', 'Молдавия', 'Таджикистан', 'Узбекистан']
-    delivery_price = 0
-    if request.data['city'] != 'Москва':
-        if request.data['country'] == 'Россия':
-            delivery_price = 350
-        elif request.data['country'] in sng:
-            delivery_price = 650
-    price += delivery_price
+        if self.request.data['delivery_type'] == 'post':
+            self.order.delivery_type = 'p'
+            self.order.first_name = self.request.data['first_name']
+            self.order.second_name = self.request.data['second_name']
+            self.order.patronymic = self.request.data['patronymic']
+            self.order.postal_code = self.request.data['postal_code']
+            self.order.address = self.request.data['address']
+        elif self.request.data['delivery_type'] == 'courier':
+            self.order.delivery_type = 'c'
+            self.order.address = self.request.data['address']
+        elif self.request.data['delivery_type'] == 'metro':
+            self.order.delivery_type = 'm'
+        self.order.pay_way = self.request.data['pay_way']
+        self.order.save()
 
-    for item in order_items:
-        price += item.item.price
-    order.total_price = price
-    order.save()
-    pay_way = "Наличными" if order.pay_way == 'cash' else "Безналичными"
+    def set_order_items(self, good_items):
+        self.order_items = [OrderItem(item_id=item['id'], size=item['size'], order=self.order) for item in good_items]
+        for item in self.order_items:
+            item.save()
 
-    ya_token = ''
-    if order.pay_way == 'card':
-        ya_token = ya_pay(price, order.id, order.email, order_items, delivery_price)
+    def delivery_price(self):
+        if self.request.data['delivery_type'] != 'post':
+            return 0
+        if self.request.data['country'] == 'Россия':
+            return 350
+        if self.request.data['country'] in ['Азербайджан', 'Армения', 'Белоруссия', 'Казахстан', 'Киргизия', 'Молдавия',
+                                            'Таджикистан', 'Узбекистан', 'Украина']:
+            return 650
+        return 1000
 
-    send_template_email(subject=f'[HRSMNT] Заказ №{order.id}',
-                        template='emails/order.html',
-                        context={'items': order_items, 'delivery_type': delivery_type, 'order': order,
-                                 'metro': metro, 'post': post, 'pay_way': pay_way, 'ya_token': ya_token},
-                        to=[order.email])
+    def set_total_price(self, delivery_price):
+        price = delivery_price
+        for item in self.order_items:
+            price += item.item.price
+        self.order.total_price = price
+        self.order.save()
 
-    if order.pay_way == 'cash':
-        return Response({"order_id": order.id}, status.HTTP_200_OK)
-    return Response({"order_id": order.id,
-                     "token": ya_token,
-                     "cent_token": jwt.encode({"sub": f"{order.id}"}, settings.CENTRIFUGO_SECRET).decode()
-                     }, status=status.HTTP_200_OK)
+    def post(self, request, *args, **kwargs):
+        self.order = Order()
+        error_items, good_items = self.filter_items()
+        if error_items:
+            return Response(error_items, status.HTTP_400_BAD_REQUEST)
+        self.set_order_data()
+        self.set_order_items(good_items)
+        delivery_price = self.delivery_price()
+        self.set_total_price(delivery_price)
+        send_template_email(subject=f'[HRSMNT] Заказ №{self.order.id}',
+                            template='emails/order.html',
+                            context={'items': self.order_items, 'order': self.order},
+                            to=[self.order.email])
+
+        if self.order.pay_way == 'cash':
+            return Response({"order_id": self.order.id}, status.HTTP_200_OK)
+        ya_token, payment_id = ya_pay(self.order.total_price, self.order.id, self.order.email, self.order_items, delivery_price)
+        self.order.payment_id = payment_id
+        self.order.save()
+        return Response({"order_id": self.order.id,
+                         "token": ya_token,
+                         "cent_token": jwt.encode({"sub": f"{self.order.id}"}, settings.CENTRIFUGO_SECRET).decode()
+                         }, status=status.HTTP_200_OK)
 
 
 @csrf_exempt
@@ -235,6 +196,8 @@ def pay_notify(request):
     cl = Client(settings.CENTRIFUGO_HOST, api_key=settings.CENTRIFUGO_API_KEY,
                 timeout=1)
     status = data['event']
+    if status == 'refund.succeeded':
+        return Response(status.HTTP_200_OK)
     order_id = int(data["object"]["description"].split("№")[1])
     cl.publish(f'payment{order_id}', status)
     order = Order.objects.get(pk=order_id)
@@ -247,7 +210,6 @@ def pay_notify(request):
                             to=[order.email])
     elif status == 'payment.canceled':
         order.pay_notified = True
-        order.paid = False
     order.save()
     response = HttpResponse()
     response.status_code = 200
@@ -258,3 +220,31 @@ def pay_notify(request):
 def check_payment(request):
     order = Order.objects.get(pk=request.GET['id'])
     return Response({"notified": order.pay_notified, "status": order.paid})
+
+
+@api_view(['GET'])
+def pay_order(request):
+    try:
+        order = Order.objects.get(pk=request.GET['id'])
+        if order.paid:
+            return Response({"error": "Заказ уже оплачен"}, status.HTTP_400_BAD_REQUEST)
+        price = 0
+        order_items = order.items.all()
+        for item in order_items:
+            price += item.item.price
+        delivery_price = price - order.total_price
+        ya_token, ya_id = ya_pay(order.total_price, order.id, order.email, order_items, delivery_price)
+        return Response({"email": order.email,
+                         "token": ya_token,
+                         "cent_token": jwt.encode({"sub": f"{order.id}"}, settings.CENTRIFUGO_SECRET).decode()
+                         }, status=status.HTTP_200_OK)
+    except exceptions.ObjectDoesNotExist:
+        return Response({"error": "Такого заказа не существует"}, status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@login_required
+def get_orders(request):
+    orders = Order.objects.filter(email=request.user.email)
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data, status.HTTP_200_OK)
