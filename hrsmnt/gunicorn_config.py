@@ -1,5 +1,5 @@
-command = '/home/mark/test.hrsmnt.ru/env/bin/gunicorn'
-pythonpath = '/home/mark/test.hrsmnt.ru/hrsmnt'
+command = '/home/mark/hrsmnt.ru/env/bin/gunicorn'
+pythonpath = '/home/mark/hrsmnt.ru/hrsmnt'
 bind = '127.0.0.1:8064'
 workers = 5
 user = 'mark'

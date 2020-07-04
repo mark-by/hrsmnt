@@ -12,7 +12,7 @@
 <p>Способ оплаты: {% if order.pay_way == 'card' %}Безналичный расчет{% else %}Наличными{% endif %}</p>
 {% if order.pay_way == 'card' %}
     <p>Заказ ожидает оплаты</p>
-    <p>Если процесс оплаты прошел неуспешно, можете оплатить <a href="https://hrsmnt.ru/#/pay-order/{{ order.id }}" style="color: blueviolet">здесь</a> в течении часа</p>
+    <p>Если процесс оплаты прошел неуспешно, можете оплатить <a href="https://hrsmnt.ru/#/pay-order/{{ order.id }}" style="color: blueviolet">здесь</a> в течениe часа</p>
 {% endif %}
 {% if order.delivery_type != 'm' %}
     <p>Адрес: {{ order.address }}</p>
