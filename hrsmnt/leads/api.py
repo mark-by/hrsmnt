@@ -151,6 +151,10 @@ class Pay(CreateAPIView):
     def delivery_price(self):
         if self.request.data['delivery_type'] != 'post':
             return 0
+        delivery_promo = Promo.objects.get(code='free_delivery')
+        if delivery_promo.active:
+            self.order.promo = delivery_promo
+            return 0
         if self.request.data['country'] == 'Россия':
             return 350
         if self.request.data['country'] in ['Азербайджан', 'Армения', 'Белоруссия', 'Казахстан', 'Киргизия', 'Молдавия',
@@ -200,7 +204,10 @@ def pay_notify(request):
         return Response(status.HTTP_200_OK)
     order_id = int(data["object"]["description"].split("№")[1])
     cl.publish(f'payment{order_id}', status)
-    order = Order.objects.get(pk=order_id)
+    try:
+        order = Order.objects.get(pk=order_id)
+    except exceptions.ObjectDoesNotExist:
+        return Response(status.HTTP_200_OK)
     if status == 'payment.succeeded':
         order.pay_notified = True
         order.paid = True

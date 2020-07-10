@@ -11,7 +11,7 @@ export default function Suggestions(props) {
 
     React.useEffect(() => {
         dispatch(fetchSuggestion(props.item))
-    }, [props.item]);
+    }, [props.item.title]);
 
     if (loading) {
         return (

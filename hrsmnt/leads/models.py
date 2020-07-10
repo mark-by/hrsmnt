@@ -223,6 +223,7 @@ class Order(models.Model):
                                    help_text='Можно написать здесь результат созвона')
     total_price = models.IntegerField(default=0, verbose_name='Итоговая стоимость заказа')
     payment_id = models.TextField(blank=True, null=True)
+    promo = models.ForeignKey('Promo', related_name='orders', on_delete=models.CASCADE, blank=True, null=True)
 
     def __str__(self):
         status = ''
@@ -266,3 +267,15 @@ class Order(models.Model):
         ordering = ['-create_at']
         verbose_name = 'Заказ'
         verbose_name_plural = 'Заказы'
+
+
+class Promo(models.Model):
+    title = models.CharField(max_length=32)
+    code = models.CharField(max_length=32, blank=True, null=True)
+    audit = models.CharField(max_length=1, default='a', choices=(('a', 'Для всех'),
+                                                                 ('p', 'Для конкретного человека')))
+    discount = models.PositiveSmallIntegerField(default=0)
+    active = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
