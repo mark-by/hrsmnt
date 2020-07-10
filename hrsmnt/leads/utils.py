@@ -21,5 +21,4 @@ def send_template_email(subject, template, context, to):
     html_message = render_to_string(template, context)
     plain_message = strip_tags(html_message)
     from_email = 'hrsmnt@hrsmnt.ru'
-    send_mail(subject, plain_message, from_email, to, html_message=html_message)
-    # + [from_email]
+    send_mail(subject, plain_message, from_email, to + [from_email], html_message=html_message)
