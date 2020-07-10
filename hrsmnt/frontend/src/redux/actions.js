@@ -198,7 +198,7 @@ export const paymentCheckStatus = (orderId) => {
         dispatch(enableLoading());
         const response = await axios.get(apiCheckPayment, {params: {id: orderId}})
         if (response.data.notified) {
-            paymentStatus(response.data.status);
+            dispatch(paymentStatus(response.data.status ? "payment.succeeded" : "payment.canceled"));
             dispatch(disableLoading());
         }
     }

@@ -6,7 +6,7 @@ from django.utils.html import strip_tags
 
 
 def path_for_item_image(instance, file_name):
-    return f"items/{instance.item.title}_item_image_{datetime.now()}"
+    return f"items/{instance.item.title}_{instance}"
 
 
 def path_for_item_main_image(instance, file_name):

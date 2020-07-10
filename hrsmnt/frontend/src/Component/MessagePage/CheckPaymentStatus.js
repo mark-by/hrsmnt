@@ -4,6 +4,7 @@ import {clearBag, disableLoading, paymentCheckStatus, paymentStatus, paymentStop
 import MessagePage from "./MessagePage";
 import {centrifugoHost} from "../../backend/config";
 import {Link} from "react-router-dom";
+import {isLogged} from "../../utils";
 
 export default function CheckPaymentStatus(props) {
     const dispatch = useDispatch();
@@ -13,7 +14,7 @@ export default function CheckPaymentStatus(props) {
 
     function handler(msg) {
         dispatch(disableLoading());
-        paymentStatus(msg.data);
+        dispatch(paymentStatus(msg.data));
     }
 
     React.useEffect(() => {
@@ -32,11 +33,14 @@ export default function CheckPaymentStatus(props) {
         <MessagePage>
             {loading && <h2>Проверяем статус платежа...</h2>}
             <h3>Номер Вашего заказа: {props.match.params.orderId}</h3>
+            {loading && <p>Если ничего не происходит, обновите страницу</p>}
             {status === 'payment.succeeded' &&
             <>
                 <h4>Все отлично! Заказ оплачен</h4>
                 <p>Проверьте свой почтовый ящик <span style={{color: "blueviolet"}}>{props.match.params.email}</span>.
                     Мы скоро с Вами свяжемся!</p>
+                <p>Вы можете следить за статусом заказа в своем личном
+                    кабинете {!isLogged() && `(для этого нужно авторизоваться или зарегистрироваться с почтой ${props.match.params.email})`}</p>
             </>}
             {status === 'payment.canceled' &&
             <>
