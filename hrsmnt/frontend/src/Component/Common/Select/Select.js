@@ -17,8 +17,25 @@ export default function Select(props) {
         select(option)
     }
 
+    function handleSelectOption(option) {
+        if (option.is_available) {
+            selectOption(option)
+            toggle(false);
+        }
+    }
+
+    function closeHandler(e) {
+        if (e.target.className === "select" ||
+            e.target.className === "main-wrapper" ||
+            e.target.className === "select-title" ||
+            e.target.classList.contains("arrow")
+        ) {
+            toggle(prev => !prev)
+        }
+    }
+
     return (
-        <div className="select" style={props.style} onClick={() => toggle(prev => !prev)}>
+        <div className="select" style={props.style} onClick={e => closeHandler(e)}>
             <div className="main-wrapper">
                 <p className="select-title">{(selected && props.secondTitle) ? props.secondTitle : props.title}</p>
                 {selected && <p>{selected.title}</p>}
@@ -26,10 +43,13 @@ export default function Select(props) {
             </div>
             {isOpen && <div className="options">
                 {props.options.map((option, idx) => {
-                    return <div className="option" key={idx} onClick={() => selectOption(option)}>{option.title}</div>
+                    return <div className={"option" + (!option.is_available ? " not-available" : "")} key={idx} onClick={() => handleSelectOption(option)}>
+                        <p>{option.title}</p>
+                        {option.status && <div className="status">{option.status}</div>}
+                    </div>
                 })}
             </div>}
-            {selected && <input type="hidden" name={props.name} value={selected.value}/>}
+            {selected && <input type="hidden" name={props.name} value={selected.title}/>}
         </div>
     )
 }

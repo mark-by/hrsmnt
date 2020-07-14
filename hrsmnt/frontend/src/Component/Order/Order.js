@@ -120,8 +120,8 @@ export default function Order({bagCost}) {
 
                 <div className="row" style={{justifyContent: "space-between", alignItems: "center"}}>
                     <p>
-                        {/*<b>Итого: {bagCost + ((delivery.type === 'post' && addressData.data.country) ? (addressData.data.country === 'Россия' ? 350 : 650) : 0)} р</b>*/}
-                        <b>Итого: {bagCost} р</b>
+                        <b>Итого: {bagCost + ((delivery.type === 'post' && addressData.data.country) ? (addressData.data.country === 'Россия' ? 350 : 650) : 0)} р</b>
+                        {/*<b>Итого: {bagCost} р</b>*/}
                     </p>
 
                     {(delivery.type === 'post' && postFilled) &&

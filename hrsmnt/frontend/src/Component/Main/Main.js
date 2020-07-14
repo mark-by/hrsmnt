@@ -1,7 +1,7 @@
 import React from "react";
 
 import './Main.css'
-import Discount from "../Discount/Discount";
+// import Discount from "../Discount/Discount";
 
 class Point {
     constructor(x = 0, y = 0) {
@@ -25,7 +25,7 @@ export default function Main() {
 
     return (
         <>
-            <Discount/>
+            {/*<Discount/>*/}
             <style>{`
             @-webkit-keyframes rotate {
                 from {
