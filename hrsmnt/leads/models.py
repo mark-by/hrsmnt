@@ -112,6 +112,8 @@ class Counter(models.Model):
 
     def save(self, *args, **kwargs):
         amount = self.amount - self.reserved
+        if amount == 0:
+            self.status = 'распродано'
         if amount == 1:
             self.status = 'последний!'
         super().save(*args, **kwargs)
