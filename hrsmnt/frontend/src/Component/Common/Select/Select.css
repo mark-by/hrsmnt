@@ -19,17 +19,25 @@
     position: absolute;
     width: 100%;
     top: 35px;
-    left: 0px;
+    left: 0;
     background: inherit;
     border-radius: 5px;
 }
 
 .option {
     display: flex;
-    justify-content: center;
-    padding: 5px;
+    justify-content: space-between;
+    padding: 5px 15px;
     border-radius: 5px;
     width: 100%;
+}
+
+.not-available {
+    color: #777;
+}
+
+.not-available:hover {
+    background: unset !important;
 }
 
 .option:hover {

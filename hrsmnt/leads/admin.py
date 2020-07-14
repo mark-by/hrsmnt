@@ -13,6 +13,7 @@ class ItemImageInline(admin.TabularInline):
 
 class CounterItemInline(admin.TabularInline):
     model = Counter
+    readonly_fields = ('status',)
 
 
 class ItemGridParameterInline(admin.TabularInline):

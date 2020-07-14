@@ -10,7 +10,7 @@ export default function Discount() {
     } else {
         return(
             <Window close={() => toggle(false)}>
-                <p>До 00.07.20 бесплатная доставка</p>
+                <p>До 27.07.20 включительно у нас бесплатная доставка</p>
             </Window>)
     }
 }

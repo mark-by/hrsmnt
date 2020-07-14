@@ -99,6 +99,7 @@ class Counter(models.Model):
     title = models.CharField(max_length=32)
     amount = models.PositiveIntegerField(default=0)
     reserved = models.PositiveIntegerField(default=0)
+    status = models.CharField(max_length=16, blank=True, null=True)
     priority = models.PositiveSmallIntegerField(default=0)
     item = models.ForeignKey('Item', related_name='counters', on_delete=models.CASCADE)
 
@@ -108,6 +109,12 @@ class Counter(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        amount = self.amount - self.reserved
+        if amount == 1:
+            self.status = 'последний!'
+        super().save(*args, **kwargs)
 
     class Meta:
         verbose_name = 'Размер'
@@ -130,6 +137,12 @@ class Item(models.Model):
 
     def __str__(self):
         return f'{self.title}'
+
+    def save(self, *args, **kwargs):
+        counters = self.counters.all()
+        for counter in counters:
+            counter.save()
+        super().save(*args, **kwargs)
 
     class Meta:
         ordering = ['-create_at']

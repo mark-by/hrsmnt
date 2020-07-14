@@ -28,7 +28,7 @@ class ChangeUserDataSerializer(serializers.ModelSerializer):
 class CounterSerializer(serializers.ModelSerializer):
     class Meta:
         model = Counter
-        fields = ('title', 'is_available')
+        fields = ('title', 'is_available', 'status')
 
 
 class ItemImageSerializer(serializers.ModelSerializer):
