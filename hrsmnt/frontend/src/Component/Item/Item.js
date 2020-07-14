@@ -94,7 +94,7 @@ export default function Item(props) {
                             </div>
                         </div>
                         <div className="item-control-part">
-                            {(selectOptions.length > 0 && item.counters > 0) &&
+                            {(selectOptions.length > 0 || item.counters > 0) &&
                             <Select options={item.counters}
                                     title="Выберите размер"
                                     secondTitle="Выбран размер"
