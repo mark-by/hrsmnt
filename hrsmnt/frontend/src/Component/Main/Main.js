@@ -20,8 +20,11 @@ export default function Main() {
         y: -(event.changedTouches[0].pageX - center.x) / 10
     });
 
-    const words = "/media/index/3.gif"
-    const frame = "/media/index/2.gif"
+    const resize = "/resize-img/w700/q95"
+
+    const firstLayer = "/media/index/layer3.png"
+    const secondLayer = "/media/index/layer2.png"
+    const thirdLayer = "/media/index/layer1.png"
 
     return (
         <>
@@ -44,14 +47,12 @@ export default function Main() {
             <div className="wrap">
                 <div className="parent animated"
                      style={{transform: 'translate(-50%, -50%) rotateX(' + deg.x + 'deg) rotateY(' + deg.y + 'deg)'}}>
-                    <div className="box1"><img src={words} onDragStart={() => {
+                    <div className="box1"><img src={firstLayer} onDragStart={() => {
                     }} alt="words"/></div>
-                    <div className="box2"><img src={frame} onDragStart={() => {
+                    <div className="box2"><img src={secondLayer} onDragStart={() => {
                     }} alt="frame"/></div>
-                    <article className="box3">
-                        <h1 data-content="HRSMNT">HRSMNT</h1>
-                        <p>YOUR MIND</p>
-                    </article>
+                    <div className="box3"><img src={thirdLayer} onDragStart={() => {
+                    }} alt="frame"/></div>
                 </div>
             </div>
         </>

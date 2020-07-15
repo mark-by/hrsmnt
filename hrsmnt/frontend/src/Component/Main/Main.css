@@ -16,7 +16,7 @@
     border-radius: 30px;
     width: 400px;
     height: 571px;
-    background: black;
+    /*background: black;*/
     transform-style: preserve-3d;
 }
 
@@ -68,10 +68,18 @@
 
 .box3 {
     position: absolute;
-    left: 53%;
-    top: 50%;
+    left: 50%;
+    top: 55%;
     width: 100%;
-    transform: translate(-50%) translateZ(150px);
+    transform: translate(-50%) translateZ(140px);
+}
+
+.box3 img {
+    width: 100%;
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
 }
 
 .box3 h1 {
