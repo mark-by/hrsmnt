@@ -1,6 +1,7 @@
 .idea/*
 env/*
 hrsmnt/static/frontend/main.js
+hrsmnt/frontend/package-lock.js
 */*/__pycache__/*
 hrsmnt/frontend/.idea/*
 hrsmnt/frontend/node_modules/*
