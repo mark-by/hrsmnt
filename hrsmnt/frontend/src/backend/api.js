@@ -27,3 +27,7 @@ export const apiCheckPayment = '/api/check-payment';
 export const apiPayOrder = '/api/pay-order';
 
 export const apiGetOrderHistory = '/api/order-history';
+
+export const apiCheckBagPrice = '/api/check-bag-price';
+export const apiCheckDeliveryPrice = '/api/check-delivery-price';
+export const apiActivatePromocode = '/api/activate-promocode';

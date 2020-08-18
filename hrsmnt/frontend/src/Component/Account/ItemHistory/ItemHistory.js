@@ -24,7 +24,6 @@ export default function ItemHistory(props) {
             <div className="item-history-title">{props.title}</div>
             <input type="hidden" value={props.title} name="title"/>
             <div className="item-history-size">{props.size}</div>
-            <input type="hidden" value={props.size.value} name="size"/>
             {props.price && <p>{props.price}</p>}
             {props.closeHandler && <img src={close}
                                         className="img-button"

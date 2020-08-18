@@ -30,7 +30,7 @@
         <p>{{ item.item.title }}  {{ item.size.title }}  {{ item.item.price }}</p>
     {% endfor %}
 </div>
-<p><b>Итого: {{ order.total_price }} р</b></p>
+<p><b>Итого: {{ order.total_price }} р {% if order.promo %}(с учетом скидки){% endif %}</b></p>
 <p>Мы с Вами свяжемся, чтобы уточнить детали заказа</p>
 <p>Если есть вопросы или Вы указали что-то не так, то пишите на <a href="mailto:hrsmnt@hrsmnt.ru">hrsmnt@hrsmnt.ru</a> или звоните на <a href="tel:89160373733">+7 916 037-37-33</a></p>
 <p>Спасибо от команды HRSMNT!</p>

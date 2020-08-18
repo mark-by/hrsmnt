@@ -3,6 +3,9 @@ export const DELETE_ITEM_FROM_BAG   = 'BAG/DELETE_ITEM_FROM_BAG';
 export const RESTORE_BAG            = 'bag/restore';
 export const CLEAR_BAG              = 'bag/clear';
 export const DELETE_BAG_ITEMS       = 'bag/delete-items';
+export const SET_BAG_PRICE          = 'bag/set-bag-price';
+export const SET_DELIVERY_PRICE     = 'bag/set-delivery-price';
+export const SET_PROMOCODE     = 'bag/activate-promocode';
 
 export const FETCH_USER_DATA        = 'USER/FETCH_USER_DATA';
 export const SET_USER_DATA          = 'USER/SET_USER_DATA';

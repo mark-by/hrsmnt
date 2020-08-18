@@ -7,6 +7,7 @@ from rest_framework import status
 from django.contrib.auth.decorators import login_required
 from django.db.utils import IntegrityError
 from django.db.models import Q
+from .promocode import *
 from rest_framework.generics import CreateAPIView
 import jwt
 from django.conf import settings
@@ -149,24 +150,31 @@ class Pay(CreateAPIView):
             item.save()
 
     def delivery_price(self):
-        if self.request.data['delivery_type'] != 'post':
-            return 0
-        delivery_promo = Promo.objects.get(code='free_delivery')
-        if delivery_promo.active:
-            self.order.promo = delivery_promo
-            return 0
-        if self.request.data['country'] == 'Россия':
-            return 350
-        if self.request.data['country'] in ['Азербайджан', 'Армения', 'Белоруссия', 'Казахстан', 'Киргизия', 'Молдавия',
-                                            'Таджикистан', 'Узбекистан', 'Украина']:
-            return 650
-        return 1000
+        delivery_type = self.request.data['delivery_type']
+        try:
+            country = self.request.data['country']
+        except ...:
+            country = "Россия"
+        return check_delivery_price(delivery_type, country)
+
+    def process_promocode(self, delivery_price):
+        promo, ok = check_promocode(self.request)
+        if ok:
+            bag_discount = process_bag_promocode(self.order.total_price, self.request.user, promo, self.order_items, False)
+            delivery_price = process_delivery_promocode(delivery_price, self.request.user, promo, False)
+            self.order.promo = promo
+            return bag_discount, delivery_price
+        else:
+            return 0, delivery_price
 
     def set_total_price(self, delivery_price):
-        price = delivery_price
+        price = 0
         for item in self.order_items:
             price += item.item.price
         self.order.total_price = price
+        discount, delivery_price = self.process_promocode(delivery_price)
+        self.order.total_price -= discount
+        self.order.total_price += delivery_price
         self.order.save()
 
     def post(self, request, *args, **kwargs):
@@ -185,7 +193,8 @@ class Pay(CreateAPIView):
 
         if self.order.pay_way == 'cash':
             return Response({"order_id": self.order.id}, status.HTTP_200_OK)
-        ya_token, payment_id = ya_pay(self.order.total_price, self.order.id, self.order.email, self.order_items, delivery_price)
+        ya_token, payment_id = ya_pay(self.order.total_price, self.order.id, self.order.email, self.order_items,
+                                      delivery_price)
         self.order.payment_id = payment_id
         self.order.save()
         return Response({"order_id": self.order.id,
@@ -255,3 +264,62 @@ def get_orders(request):
     orders = Order.objects.filter(email=request.user.email)
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data, status.HTTP_200_OK)
+
+def check_promocode(request):
+    """
+    :param request: Http request
+    :return: promo, ok
+
+    If ok is False promo - error string
+    """
+    try:
+        code = request.data['promocode']
+        if code:
+            code = code.strip()
+        else:
+            return "", False
+        promo = Promo.objects.get(code__iexact=code)
+    except (exceptions.ObjectDoesNotExist, KeyError):
+        return "Такого промокода не существует", False
+    if not promo.active:
+        return "Промокод уже не действителен", False
+    return verbose_check_promocode(request, promo)
+
+
+@api_view(['POST'])
+def activate_promocode(request):
+    promo, ok = check_promocode(request)
+    if ok:
+        return Response({"title": promo.title, "description": promo.description})
+    else:
+        return Response({"error": promo}, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["POST"])
+def check_delivery_cost(request):
+    try:
+        delivery_type = request.data['delivery_type']
+    except KeyError:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    try:
+        delivery_country = request.data['country']
+    except KeyError:
+        delivery_country = 'Россия'
+    delivery_price = check_delivery_price(delivery_type, delivery_country)
+    promo, ok = check_promocode(request)
+    if ok:
+        delivery_price = process_delivery_promocode(delivery_price, request.user, promo)
+    return Response({"delivery_price": delivery_price})
+
+
+@api_view(["POST"])
+def check_bag_cost(request):
+    item_ids = request.data['items']
+    items = Item.objects.filter(id__in=item_ids)
+    promo, ok = check_promocode(request)
+    total_price = 0
+    for item in items:
+        total_price += item.price * item_ids.count(item.id)
+    if ok:
+        total_price -= process_bag_promocode(total_price, request.user, promo, items)
+    return Response({"price": total_price})

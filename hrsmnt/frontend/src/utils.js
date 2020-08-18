@@ -39,3 +39,5 @@ export async function loadImage(src, srcSet) {
 export function toggleTitle(stateHandler) {
     stateHandler(prev => ({...prev, isOpen: !prev.isOpen}));
 }
+
+export const item_list_to_ids = (list) => (list.map(item => item.id))

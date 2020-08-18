@@ -6,12 +6,12 @@ import star from '../../images/star.svg'
 import fillStar from '../../images/fillStar.svg'
 import Suggestions from "./Suggestions/Suggestions";
 import {useDispatch, useSelector} from "react-redux";
-import {addFavorite, addItemToBag, fetchItem, showMessage} from "../../redux/actions";
+import {addFavorite, addItemToBag, checkBagPrice, fetchItem, showMessage} from "../../redux/actions";
 import {Link, Redirect} from 'react-router-dom';
 import MessagePage from "../MessagePage/MessagePage";
 import {msgTypeFail, msgTypeSuccess} from "../Message/types";
 import SizeGrid from "../SizeGrid/SizeGrid";
-import {isLogged} from "../../utils";
+import {isLogged, item_list_to_ids} from "../../utils";
 
 export default function Item(props) {
     const [sizeSelected, selectSize] = React.useState(false);
@@ -21,6 +21,12 @@ export default function Item(props) {
     const items = useSelector(state => state.shop.list)
     const loading = useSelector(state => state.app.loading);
     const bagItems = useSelector(state => state.bag.list)
+    const promocode = useSelector(state => state.bag.promocode);
+
+    React.useEffect(() => {
+        dispatch(checkBagPrice(item_list_to_ids(bagItems), promocode.code))
+    }, [bagItems, promocode.code])
+
 
     const index = items.findIndex(item => item.id == props.match.params.id)
     let item = {images: [], counters: []};
@@ -34,10 +40,10 @@ export default function Item(props) {
 
     function addToBag(item) {
         if (sizeSelected) {
-            if (bagItems.findIndex(el => el.id === item.id && el.size === sizeSelected.value) !== -1) {
+            if (bagItems.findIndex(el => el.id === item.id && el.size === sizeSelected.title) !== -1) {
                 dispatch(showMessage({value: "Товар уже в корзине", type: msgTypeFail}))
             } else {
-                dispatch(addItemToBag({...item, size: sizeSelected.value}));
+                dispatch(addItemToBag({...item, size: sizeSelected.title}));
                 dispatch(showMessage({value: "Товар добавлен в корзину", type: msgTypeSuccess}))
             }
         } else {
@@ -81,7 +87,7 @@ export default function Item(props) {
 
     return (
         <main className="container item">
-            {sizeGridIsOpen && <SizeGrid parameters={item.parameters} close={() => toggleSizeGrid(false)}/>}
+            {sizeGridIsOpen && <SizeGrid parameters={item.parameters} type={item.type} close={() => toggleSizeGrid(false)}/>}
             <div className="item-main-page-wrapper">
                 <Slider images={item.images}/>
                 <div className="right-part">

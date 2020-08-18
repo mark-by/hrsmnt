@@ -1,6 +1,7 @@
 import React from 'react'
 import './SizeGrid.css'
 import close from '../../images/close.svg'
+import {grid_t_shirt} from "../../images/images";
 
 export default function SizeGrid(props) {
 
@@ -8,6 +9,15 @@ export default function SizeGrid(props) {
         console.log(event.target)
         if (event.target.classList.contains("size-grid-wrapper")) {
             props.close()
+        }
+    }
+
+    function descriptionImage() {
+        switch (props.type) {
+            case 'Футболка':
+                return grid_t_shirt;
+            default:
+                return '';
         }
     }
 
@@ -28,6 +38,7 @@ export default function SizeGrid(props) {
                         </>
                     ))}
                 </div>
+                <img src={descriptionImage()} alt={"grid description"} className="size-grid__description-image"/>
                 <p style={{fontSize: "12px", marginTop: "15px", color: "gray"}}>Размеры в сантиметрах</p>
             </div>
         </div>

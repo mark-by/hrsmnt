@@ -1,10 +1,10 @@
 .discount {
     position: absolute;
-    right: 15px;
-    bottom: 15px;
+    right: -15px;
+    bottom: -15px;
     background: gold;
-    width: 40px;
-    height: 40px;
+    width: 30px;
+    height: 30px;
     border-radius: 50%;
     display: flex;
     justify-content: center;
@@ -14,5 +14,5 @@
 }
 
 .discount>img {
-    width: 30px;
+    width: 25px;
 }

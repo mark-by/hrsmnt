@@ -21,7 +21,7 @@ export default function DeliveryInfo({
                        hint="Нужен, чтобы договориться о дате и времени"
                        value={postData.tel}
                        stateHandler={setPostData}
-                       gridTemplate="80px 1fr" style={{maxWidth: "550px"}}
+                       gridTemplate="80px 250px" style={{maxWidth: "550px"}}
                        required={true}/>
                 <Input options={{
                     type: "email",
