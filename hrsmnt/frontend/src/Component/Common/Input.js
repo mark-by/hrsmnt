@@ -35,7 +35,8 @@ export default function Input(props) {
         border: "1px solid " + (props.errors ? "red" : "gray"),
         padding: '2px',
         borderRadius: '2px',
-        color: options.readOnly ? "gray" : "black"
+        color: options.readOnly ? "gray" : "black",
+        width: "-webkit-fill-available"
     }
 
     let content = <></>

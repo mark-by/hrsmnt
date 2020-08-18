@@ -36,4 +36,8 @@ urlpatterns = router.get_urls() + [
     path('api/order-history', get_orders),
 
     path('api/ok', ok, name='account_email_verification_sent'),
+
+    path('api/activate-promocode', activate_promocode),
+    path('api/check-delivery-price', check_delivery_cost),
+    path('api/check-bag-price', check_bag_cost)
 ] + static(django_settings.MEDIA_URL, document_root=django_settings.MEDIA_ROOT)

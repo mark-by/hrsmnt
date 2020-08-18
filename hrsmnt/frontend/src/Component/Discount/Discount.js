@@ -3,14 +3,14 @@ import {discount} from "../../images/images";
 import './Discount.css';
 import Window from "../Common/Window/Window";
 
-export default function Discount() {
+export default function Discount({text}) {
     const [open, toggle] = React.useState(false);
     if (!open) {
         return( <div className="discount" onClick={e => toggle(true)}><img src={discount} alt="discount description"/></div> );
     } else {
         return(
             <Window close={() => toggle(false)}>
-                <p>До 27.07.20 включительно у нас бесплатная доставка</p>
+                {text}
             </Window>)
     }
 }

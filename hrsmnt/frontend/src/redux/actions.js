@@ -16,7 +16,7 @@ import {
     ITEM_TOGGLE_FAVORITE, PAYMENT_START, PAYMENT_START_LOADING, PAYMENT_STATUS, PAYMENT_STOP, PAYMENT_STOP_LOADING,
     RESTORE_BAG,
     SAVE_ADDRESS,
-    SET_ADDRESSES,
+    SET_ADDRESSES, SET_BAG_PRICE, SET_DELIVERY_PRICE, SET_PROMOCODE,
     SET_USER_DATA,
     SHOW_MESSAGE,
     START_LOADING, UNBLUR_APP,
@@ -24,7 +24,8 @@ import {
 } from "./types";
 import axios from 'axios';
 import {
-    apiAddFavorite, apiCheckPayment,
+    apiActivatePromocode,
+    apiAddFavorite, apiCheckBagPrice, apiCheckDeliveryPrice, apiCheckPayment,
     apiGetAddresses,
     apiGetFavorites,
     apiGetItem,
@@ -33,24 +34,9 @@ import {
     apiVerifyEmail
 } from "../backend/api";
 import {csrfAxios} from "../utils";
-import {msgTypeFail} from "../Component/Message/types";
+import {msgTypeFail, msgTypeSuccess} from "../Component/Message/types";
+import React from "react";
 
-//BAG
-export const addItemToBag = (item) => ({type: ADD_ITEM_TO_BAG, payload: item})
-export const deleteItemFromBag = (item) => ({type: DELETE_ITEM_FROM_BAG, payload: item})
-export const restoreBag = () => {
-    return async dispatch => {
-        const bag = localStorage.getItem('bag');
-        if (bag) {
-            dispatch({type: RESTORE_BAG, payload: JSON.parse(bag)});
-        } else {
-            dispatch({type: RESTORE_BAG, payload: []});
-        }
-    }
-}
-export const deleteBagItems = (items) => ({type: DELETE_BAG_ITEMS, payload: items});
-
-export const clearBag = () => ({type: CLEAR_BAG})
 
 //USER
 export const fetchUserData = () => {
@@ -227,3 +213,79 @@ export const fetchOrderHistory = () => {
         dispatch(disableLoading());
     }
 }
+
+
+export const setBagPrice = (price) => ({type: SET_BAG_PRICE, payload: price});
+export const setDeliveryPrice = (price) => ({type: SET_DELIVERY_PRICE, payload: price});
+
+//BAG
+export const addItemToBag = (item) => ({type: ADD_ITEM_TO_BAG, payload: item})
+export const deleteItemFromBag = (item) => ({type: DELETE_ITEM_FROM_BAG, payload: item})
+export const restoreBag = () => {
+    return async dispatch => {
+        const bag = localStorage.getItem('bag');
+        let bagPrice = localStorage.getItem('bagPrice');
+        let deliveryPrice = localStorage.getItem('deliveryPrice');
+        bagPrice = bagPrice ? bagPrice : 0;
+        deliveryPrice = deliveryPrice ? deliveryPrice : 0;
+        if (bag) {
+            dispatch({type: RESTORE_BAG, payload: {list: JSON.parse(bag), deliveryPrice, bagPrice}});
+        } else {
+            dispatch({type: RESTORE_BAG, payload: {list: [], deliveryPrice: 0, bagPrice: 0}});
+        }
+    }
+}
+
+export const activatePromocode = (promocode) => {
+    return async dispatch => {
+        if (!promocode) {
+            dispatch(showMessage({value: `Введите промокод`, type: msgTypeFail}));
+            return
+        }
+        try {
+            const response = await csrfAxios(apiActivatePromocode, {promocode})
+            dispatch(showMessage({
+                value: <p><b>Промокод активирован!</b><br/>{response.data.title}<br/><br/>{response.data.description}</p>,
+                type: msgTypeSuccess,
+                time: 3000
+            }));
+            dispatch({type: SET_PROMOCODE, payload: {code: promocode, title: response.data.title, description: response.data.description}});
+        } catch (err) {
+            dispatch(showMessage({value: `${err.response.data.error}`, type: msgTypeFail}));
+        }
+
+    }
+}
+
+export const deleteBagItems = (items) => ({type: DELETE_BAG_ITEMS, payload: items});
+export const clearBag = () => ({type: CLEAR_BAG});
+
+
+export const checkBagPrice = (items, promocode) => {
+    return async dispatch => {
+        let data = {items};
+        if (promocode) {
+            data = {...data, promocode}
+        }
+        csrfAxios(apiCheckBagPrice, data)
+            .then(response => {
+                dispatch(setBagPrice(response.data.price));
+            })
+            .catch()
+    }
+}
+
+export const checkDeliveryPrice = (delivery_type, country, promocode) => {
+    return async dispatch => {
+        let data = {delivery_type, country};
+        if (promocode) {
+            data = {...data, promocode}
+        }
+        csrfAxios(apiCheckDeliveryPrice, data)
+            .then(response => {
+                dispatch(setDeliveryPrice(response.data.delivery_price));
+            })
+            .catch()
+    }
+}
+

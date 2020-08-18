@@ -1,3 +1,10 @@
+#message {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    overflow: visible;
+}
+
 .message {
     position: absolute;
     background: white;

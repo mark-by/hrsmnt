@@ -285,12 +285,12 @@ class Order(models.Model):
 
 
 class Promo(models.Model):
-    title = models.CharField(max_length=32)
-    code = models.CharField(max_length=32, blank=True, null=True)
-    audit = models.CharField(max_length=1, default='a', choices=(('a', 'Для всех'),
-                                                                 ('p', 'Для конкретного человека')))
-    discount = models.PositiveSmallIntegerField(default=0)
-    active = models.BooleanField(default=False)
+    title = models.CharField(max_length=32, null=True, verbose_name="Название")
+    description = models.TextField(null=True, verbose_name="Описание")
+    code = models.CharField(max_length=32, blank=True, null=True, verbose_name="Промокод")
+    discount = models.PositiveSmallIntegerField(default=0, verbose_name="Скидка (%)")
+    once = models.BooleanField(default=False, verbose_name="Разовый")
+    active = models.BooleanField(default=False, verbose_name="Действительный")
 
     def __str__(self):
         return self.title

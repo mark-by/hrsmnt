@@ -36,6 +36,12 @@
     cursor: pointer;
 }
 
+.size-grid__description-image {
+    width: 250px;
+    display: block;
+    margin: 0 auto;
+}
+
 .grid {
     display: grid;
     grid-row-gap: 10px;
