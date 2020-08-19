@@ -25,6 +25,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'frontend',
     'leads',
+    'analytical'
 ]
 
 SITE_ID = 1
