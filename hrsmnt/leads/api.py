@@ -16,6 +16,7 @@ import random
 import json
 from cent import Client
 from .serializers import *
+import threading
 
 
 @api_view(['GET'])
@@ -153,7 +154,7 @@ class Pay(CreateAPIView):
         delivery_type = self.request.data['delivery_type']
         try:
             country = self.request.data['country']
-        except ...:
+        except KeyError:
             country = "Россия"
         return check_delivery_price(delivery_type, country)
 
@@ -186,10 +187,12 @@ class Pay(CreateAPIView):
         self.set_order_items(good_items)
         delivery_price = self.delivery_price()
         self.set_total_price(delivery_price)
-        send_template_email(subject=f'[HRSMNT] Заказ №{self.order.id}',
-                            template='emails/order.html',
-                            context={'items': self.order_items, 'order': self.order},
-                            to=[self.order.email])
+        options = {"subject": f'[HRSMNT] Заказ №{self.order.id}',
+                   "template": 'emails/order.html',
+                   "context": {'items': self.order_items, 'order': self.order},
+                   "to": [self.order.email]}
+        send_email = threading.Thread(target=send_template_email, kwargs=options)
+        send_email.start()
 
         if self.order.pay_way == 'cash':
             return Response({"order_id": self.order.id}, status.HTTP_200_OK)
